@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>개인맞춤 건강 음식표</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Apple SD Gothic Neo','Malgun Gothic',sans-serif;background:#f0f2f5;color:#333}
+  .top-bar{background:linear-gradient(135deg,#1a3a0a 0%,#2d5016 50%,#3d6b1e 100%);padding:28px 24px 20px;text-align:center;color:#fff}
+  .top-bar h1{font-size:24px;letter-spacing:2px;margin-bottom:6px}
+  .top-bar p{font-size:13px;opacity:.7}
+  .summary-row{display:flex;justify-content:center;gap:12px;padding:20px 16px 8px;flex-wrap:wrap;position:relative;z-index:1}
+  .summary-card{background:#fff;border-radius:12px;padding:14px 20px;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06);min-width:140px}
+  @media(max-width:480px){.summary-card{min-width:90px;padding:10px 12px}.summary-card .value{font-size:12px}}
+  .summary-card .label{font-size:12px;color:#999;margin-bottom:4px}
+  .summary-card .value{font-size:15px;font-weight:700}
+  .summary-card .value .common{color:#e65100}
+  .summary-card .value .only{color:#888}
+  .tab-container{display:flex;justify-content:center;gap:4px;padding:16px 12px 0;flex-wrap:wrap;position:relative;z-index:10}
+  .tab-btn{padding:14px 18px;font-size:14px;font-weight:700;border:none;cursor:pointer;border-radius:14px 14px 0 0;transition:all .25s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none}
+  .tab-btn.active{z-index:12}
+  @media(max-width:520px){.tab-btn{padding:11px 10px;font-size:12px}}
+  .tab-husband{background:#e8f5e9;color:#4a7c28}
+  .tab-husband.active{background:#4a7c28;color:#fff;box-shadow:0 -2px 12px rgba(74,124,40,.3)}
+  .tab-wife{background:#fce4ec;color:#c62828}
+  .tab-wife.active{background:#c62828;color:#fff;box-shadow:0 -2px 12px rgba(198,40,40,.3)}
+  .tab-common{background:#fff3e0;color:#e65100}
+  .tab-common.active{background:#e65100;color:#fff;box-shadow:0 -2px 12px rgba(230,81,0,.3)}
+  .tab-menu{background:#e8eaf6;color:#283593}
+  .tab-menu.active{background:#283593;color:#fff;box-shadow:0 -2px 12px rgba(40,53,147,.3)}
+  .tab-guide{background:#e0f2f1;color:#00695c}
+  .tab-guide.active{background:#00695c;color:#fff;box-shadow:0 -2px 12px rgba(0,105,92,.3)}
+  .tab-planner{background:#fff8e1;color:#e65100}
+  .tab-planner.active{background:#e65100;color:#fff;box-shadow:0 -2px 12px rgba(230,81,0,.3)}
+  .tab-content{display:none;padding:20px 16px 32px;max-width:900px;margin:0 auto}
+  .tab-content.active{display:block}
+  .cat-section{background:#fff;border-radius:14px;margin-bottom:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .cat-header{padding:14px 20px;font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:space-between}
+  .cat-header .cat-num{background:rgba(255,255,255,.2);padding:2px 10px;border-radius:8px;font-size:14px}
+  .cat-header .cat-badge{font-size:11px;background:rgba(255,255,255,.3);padding:3px 10px;border-radius:10px}
+  .bg-green{background:linear-gradient(90deg,#4a7c28,#6aa33e)}
+  .bg-teal{background:linear-gradient(90deg,#00695c,#26a69a)}
+  .bg-blue{background:linear-gradient(90deg,#1565c0,#42a5f5)}
+  .bg-purple{background:linear-gradient(90deg,#6a1b9a,#ab47bc)}
+  .bg-pink{background:linear-gradient(90deg,#ad1457,#e91e63)}
+  .bg-orange{background:linear-gradient(90deg,#e65100,#ff9800)}
+  .food-group{padding:14px 20px;border-bottom:1px solid #f5f5f5}
+  .food-group:last-child{border-bottom:none}
+  .food-group-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#999;margin-bottom:8px}
+  .food-tags{display:flex;flex-wrap:wrap;gap:6px}
+  .tag{display:inline-block;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:500}
+  .tag-1{background:#e8f5e9;color:#2e7d32}
+  .tag-2{background:#fff3e0;color:#e65100}
+  .tag-5{background:#e0f2f1;color:#00695c}
+  .tag-6{background:#e3f2fd;color:#1565c0}
+  .tag-6p{background:#f3e5f5;color:#6a1b9a}
+  .tag-x{background:#ffcdd2!important;color:#c62828!important;text-decoration:line-through;opacity:.5}
+  .divider-label{text-align:center;padding:16px 0 8px;font-size:13px;font-weight:600;color:#bbb;letter-spacing:2px}
+  .note-box{margin-top:8px;padding:16px 20px;background:#fafafa;border-radius:14px;border:1px dashed #ddd;font-size:12px;line-height:1.8;color:#777}
+  .note-box strong{color:#e65100}
+  .menu-section-title{font-size:18px;font-weight:800;color:#283593;display:flex;align-items:center;gap:10px;margin:24px 0 12px;padding:0 4px}
+  .menu-section-title:first-child{margin-top:8px}
+  .menu-section-title .cnt{font-size:13px;font-weight:500;color:#999}
+  .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:8px}
+  .mc{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 6px rgba(0,0,0,.05);transition:transform .2s}
+  .mc:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+  .mc-bar{height:4px}
+  .bar-rice{background:linear-gradient(90deg,#8d6e63,#a1887f)}
+  .bar-soup{background:linear-gradient(90deg,#ef6c00,#ff9800)}
+  .bar-grill{background:linear-gradient(90deg,#c62828,#e53935)}
+  .bar-jeon{background:linear-gradient(90deg,#f9a825,#fdd835)}
+  .bar-side{background:linear-gradient(90deg,#2e7d32,#4caf50)}
+  .bar-special{background:linear-gradient(90deg,#283593,#5c6bc0)}
+  .bar-dessert{background:linear-gradient(90deg,#00838f,#26c6da)}
+  .mc-body{padding:12px 14px}
+  .mc-name{font-size:14px;font-weight:700;margin-bottom:3px}
+  .mc-desc{font-size:11px;color:#999;line-height:1.4;margin-bottom:6px}
+  .mc-ings{display:flex;flex-wrap:wrap;gap:3px}
+  .mi{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+  .mi-1{background:#e8f5e9;color:#2e7d32}
+  .mi-6{background:#e3f2fd;color:#1565c0}
+  .mi-6p{background:#f3e5f5;color:#6a1b9a}
+  .mi-m{background:#e8f5e9;color:#2e7d32}
+  .tip-box{background:#fff;border-radius:14px;padding:20px 24px;box-shadow:0 2px 8px rgba(0,0,0,.05);margin-top:20px}
+  .tip-box h3{font-size:15px;font-weight:700;color:#283593;margin-bottom:12px}
+  .tip-item{font-size:13px;color:#555;line-height:1.8;padding-left:16px;text-indent:-16px;margin-bottom:4px}
+  .tip-item::before{content:"·";margin-right:8px;font-weight:700;color:#a1887f}
+  .note-top{max-width:900px;margin:0 auto 12px;padding:12px 20px;border-radius:12px;font-size:12px;line-height:1.7;text-align:center}
+  .note-top strong{color:#c62828}
+  .allergy-note{background:#ffebee;color:#c62828}
+  .guide-note{background:#e0f2f1;color:#00695c}
+
+  /* Guide tab styles */
+  .guide-card{background:#fff;border-radius:14px;margin-bottom:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .guide-header{padding:16px 20px;font-size:17px;font-weight:700;color:#fff;display:flex;align-items:center;gap:10px}
+  .bg-meal-a{background:linear-gradient(90deg,#ff8f00,#ffb300)}
+  .bg-meal-b{background:linear-gradient(90deg,#e65100,#ff6d00)}
+  .bg-meal-c{background:linear-gradient(90deg,#bf360c,#e64a19)}
+  .bg-meal-s{background:linear-gradient(90deg,#00695c,#00897b)}
+  .bg-macro{background:linear-gradient(90deg,#283593,#3949ab)}
+  .meal-row{display:flex;gap:12px;padding:14px 20px;border-bottom:1px solid #f5f5f5;align-items:flex-start;flex-wrap:wrap}
+  .meal-row:last-child{border-bottom:none}
+  .meal-item{flex:1;min-width:120px}
+  .meal-cat{font-size:11px;font-weight:700;color:#999;margin-bottom:4px;letter-spacing:.5px}
+  .meal-food{font-size:14px;font-weight:600;color:#333;margin-bottom:2px}
+  .meal-amount{font-size:12px;color:#888}
+  .meal-kcal{font-size:12px;color:#e65100;font-weight:600}
+  .macro-bar{display:flex;height:28px;border-radius:14px;overflow:hidden;margin:12px 20px}
+  .macro-carb{background:#ff9800;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+  .macro-protein{background:#4caf50;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+  .macro-fat{background:#2196f3;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+  .macro-legend{display:flex;justify-content:center;gap:16px;padding:8px 20px 16px;font-size:12px;color:#666;flex-wrap:wrap}
+  .macro-dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+  .total-row{background:#f5f5f5;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;font-weight:700}
+  .total-kcal{font-size:18px;color:#e65100}
+  .day-selector{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .day-btn{padding:10px 18px;border:2px solid #ddd;background:#fff;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .day-btn.active{border-color:#00695c;background:#00695c;color:#fff}
+  .day-content{display:none}
+  .day-content.active{display:block}
+
+  /* ===== Planner Tab Styles ===== */
+  .planner-wrap{padding:0}
+  .pw-week-bar{display:flex;justify-content:center;align-items:center;gap:12px;padding:14px 16px;background:#fff;border-radius:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);flex-wrap:wrap}
+  .pw-week-label{font-size:15px;font-weight:700;color:#2d5016}
+  .pw-week-date{font-size:12px;color:#999}
+  .pw-btn{padding:8px 16px;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+  .pw-btn-gen{background:#e65100;color:#fff}.pw-btn-gen:hover{background:#bf360c}
+  .pw-btn-shop{background:#2d5016;color:#fff}.pw-btn-shop:hover{background:#1a3a0a}
+  .pw-info-note{background:#fff8e1;border:1px solid #ffe082;border-radius:10px;padding:10px 14px;font-size:11px;color:#e65100;line-height:1.6;text-align:center;margin-bottom:12px}
+  .pw-tab-row{display:flex;overflow-x:auto;gap:4px;padding:0 0 0;-webkit-overflow-scrolling:touch;margin-bottom:0}
+  .pw-tab-row::-webkit-scrollbar{display:none}
+  .pw-dtab{padding:10px 14px;border-radius:10px 10px 0 0;font-size:13px;font-weight:700;white-space:nowrap;border:none;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:all .2s;background:#e8f5e9;color:#4a7c28}
+  .pw-dtab.active{background:#2d5016;color:#fff;box-shadow:0 -2px 8px rgba(45,80,22,.3)}
+  .pw-dtab .dow{font-size:10px;display:block;opacity:.7;margin-top:2px}
+  .pw-day-wrap{display:none;padding:16px 0}
+  .pw-day-wrap.active{display:block}
+  .pw-day-head{text-align:center;margin-bottom:12px}
+  .pw-day-kcal{font-size:22px;font-weight:800;color:#e65100}
+  .pw-day-macro{font-size:12px;color:#888;margin-top:2px}
+  .pw-meal-card{background:#fff;border-radius:14px;margin-bottom:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .pw-meal-head{padding:14px 18px;font-size:15px;font-weight:700;color:#fff;display:flex;justify-content:space-between;align-items:center}
+  .pw-meal-kcal-badge{font-size:12px;background:rgba(255,255,255,.25);padding:3px 10px;border-radius:8px}
+  .pw-bg-lunch{background:linear-gradient(90deg,#ff8f00,#ffb300)}
+  .pw-bg-snack{background:linear-gradient(90deg,#00695c,#00897b)}
+  .pw-bg-dinner{background:linear-gradient(90deg,#283593,#3949ab)}
+  .pw-food-row{display:flex;gap:12px;padding:12px 18px;border-bottom:1px solid #f5f5f5;align-items:center;cursor:pointer;transition:background .15s}
+  .pw-food-row:hover{background:#fafafa}
+  .pw-food-row:last-child{border-bottom:none}
+  .pw-food-emoji{font-size:28px;flex-shrink:0;width:40px;text-align:center}
+  .pw-food-info{flex:1;min-width:0}
+  .pw-food-name{font-size:14px;font-weight:700}
+  .pw-food-amt{font-size:11px;color:#999;margin-top:1px}
+  .pw-food-kcal{font-size:13px;font-weight:700;color:#e65100;flex-shrink:0}
+  /* Recipe modal */
+  .pw-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;overflow-y:auto;padding:20px 12px}
+  .pw-modal-overlay.active{display:block}
+  .pw-modal{background:#fff;border-radius:16px;max-width:600px;margin:0 auto;overflow:hidden;animation:pwSlideUp .25s}
+  @keyframes pwSlideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .pw-modal-top{padding:20px;text-align:center}
+  .pw-modal-emoji{font-size:56px;margin-bottom:8px}
+  .pw-modal-name{font-size:20px;font-weight:800}
+  .pw-modal-sub{font-size:12px;color:#999;margin-top:4px}
+  .pw-modal-macros{display:flex;justify-content:center;gap:16px;padding:12px 20px;background:#f9f9f9}
+  .pw-modal-macro{text-align:center}
+  .pw-modal-macro .val{font-size:18px;font-weight:800}
+  .pw-modal-macro .lbl{font-size:10px;color:#999}
+  .pw-m-carb .val{color:#ff9800}.pw-m-prot .val{color:#4caf50}.pw-m-fat .val{color:#2196f3}.pw-m-kcal .val{color:#e65100}
+  .pw-modal-section{padding:16px 20px;border-top:1px solid #f0f0f0}
+  .pw-modal-section h3{font-size:14px;font-weight:700;margin-bottom:10px;color:#2d5016}
+  .pw-ing-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;border-bottom:1px dotted #eee}
+  .pw-ing-row:last-child{border-bottom:none}
+  .pw-ing-cat{font-size:10px;padding:1px 6px;border-radius:6px;margin-left:6px;font-weight:600}
+  .pw-ic1{background:#e8f5e9;color:#2e7d32}.pw-ic6{background:#e3f2fd;color:#1565c0}.pw-ic6p{background:#f3e5f5;color:#6a1b9a}
+  .pw-step{display:flex;gap:10px;margin-bottom:10px;font-size:13px;line-height:1.6}
+  .pw-step-num{width:24px;height:24px;border-radius:50%;background:#2d5016;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;margin-top:2px}
+  .pw-modal-close{position:sticky;bottom:0;padding:14px;text-align:center;background:#fff;border-top:1px solid #eee}
+  .pw-modal-close .pw-btn{width:100%;max-width:300px;padding:12px;font-size:15px;background:#2d5016;color:#fff;border-radius:12px}
+  /* Shopping list */
+  .pw-shop-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:1000;overflow-y:auto;padding:20px 12px}
+  .pw-shop-overlay.active{display:block}
+  .pw-shop-modal{background:#fff;border-radius:16px;max-width:600px;margin:0 auto;overflow:hidden}
+  .pw-shop-head{padding:20px;background:#2d5016;color:#fff;text-align:center}
+  .pw-shop-head h2{font-size:18px;margin-bottom:4px}
+  .pw-shop-head p{font-size:12px;opacity:.7}
+  .pw-shop-cat{padding:14px 20px;border-bottom:1px solid #f0f0f0}
+  .pw-shop-cat-label{font-size:13px;font-weight:700;color:#2d5016;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+  .pw-shop-items{display:flex;flex-wrap:wrap;gap:6px}
+  .pw-shop-item{font-size:12px;padding:4px 10px;background:#f5f5f5;border-radius:8px;display:flex;align-items:center;gap:4px}
+  .pw-shop-item input{margin:0}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>개인맞춤 건강 음식표</h1>
+  <p>체질별 섭취 가능 식재료 · 공통 식단 · 하루 칼로리 가이드 · 주간 식단 플래너</p>
+</div>
+
+<div class="summary-row">
+  <div class="summary-card"><div class="label">DS</div><div class="value"><span class="common">① ⑥ ⑥'</span> + <span class="only">⑤</span></div></div>
+  <div class="summary-card"><div class="label">JS</div><div class="value"><span class="common">① ⑥ ⑥'</span> + <span class="only">②</span></div></div>
+  <div class="summary-card" style="border:2px solid #e65100"><div class="label">공통</div><div class="value" style="color:#e65100;font-size:18px">① ⑥ ⑥'</div></div>
+</div>
+
+<div class="tab-container">
+  <button class="tab-btn tab-husband active" onclick="showTab('husband')">DS</button>
+  <button class="tab-btn tab-wife" onclick="showTab('wife')">JS</button>
+  <button class="tab-btn tab-common" onclick="showTab('common')">공통식재료</button>
+  <button class="tab-btn tab-menu" onclick="showTab('menu')">공통식단</button>
+  <button class="tab-btn tab-guide" onclick="showTab('guide')">하루가이드</button>
+  <button class="tab-btn tab-planner" onclick="showTab('planner')">📅 주간플래너</button>
+</div>
+
+<!-- ==================== DS ==================== -->
+<div id="tab-husband" class="tab-content active">
+  <div class="note-top allergy-note"><strong>알레르기 제외:</strong> 밀/밀가루, 땅콩 — ① 카테고리에서 제외됨</div>
+  <div class="divider-label">— 공통 카테고리 —</div>
+  <div class="cat-section"><div class="cat-header bg-green"><div><span class="cat-num">①</span> 카테고리</div><span class="cat-badge">공통</span></div>
+    <div class="food-group"><div class="food-group-label">곡류 · 견과</div><div class="food-tags"><span class="tag tag-x">밀 ✕</span><span class="tag tag-1">녹두</span><span class="tag tag-1">보리</span><span class="tag tag-1">서리태</span><span class="tag tag-1">완두콩</span><span class="tag tag-1">참깨</span><span class="tag tag-1">잣</span><span class="tag tag-1">호두</span><span class="tag tag-x">땅콩 ✕</span><span class="tag tag-1">아몬드</span></div></div>
+    <div class="food-group"><div class="food-group-label">채소 · 나물 · 버섯</div><div class="food-tags"><span class="tag tag-1">쑥</span><span class="tag tag-1">열무</span><span class="tag tag-1">순무</span><span class="tag tag-1">갓</span><span class="tag tag-1">부추</span><span class="tag tag-1">치커리</span><span class="tag tag-1">무순</span><span class="tag tag-1">깻잎</span><span class="tag tag-1">민들레잎</span><span class="tag tag-1">다래순</span><span class="tag tag-1">취나물</span><span class="tag tag-1">숙주</span><span class="tag tag-1">브로콜리</span><span class="tag tag-1">새송이</span><span class="tag tag-1">자연산송이</span><span class="tag tag-1">목이버섯</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일</div><div class="food-tags"><span class="tag tag-1">거봉</span><span class="tag tag-1">청포도</span><span class="tag tag-1">딸기</span><span class="tag tag-1">체리</span><span class="tag tag-1">앵두</span><span class="tag tag-1">귤</span><span class="tag tag-1">오렌지</span><span class="tag tag-1">청견</span><span class="tag tag-1">레몬</span><span class="tag tag-1">한라봉</span><span class="tag tag-1">자두</span><span class="tag tag-1">사과</span><span class="tag tag-1">파인애플</span><span class="tag tag-1">그린키위</span><span class="tag tag-1">블루베리</span></div></div>
+    <div class="food-group"><div class="food-group-label">육류 · 해산물 · 계란</div><div class="food-tags"><span class="tag tag-1">닭</span><span class="tag tag-1">미꾸라지</span><span class="tag tag-1">민물장어</span><span class="tag tag-1">다슬기(올갱이)</span><span class="tag tag-1">계란</span></div></div>
+    <div class="food-group"><div class="food-group-label">기름 · 김치류</div><div class="food-tags"><span class="tag tag-1">참기름</span><span class="tag tag-1">올리브유</span><span class="tag tag-1">갓김치</span><span class="tag tag-1">깻잎김치</span><span class="tag tag-1">순무김치</span><span class="tag tag-1">열무김치</span><span class="tag tag-1">부추김치</span></div></div>
+  </div>
+  <div class="cat-section"><div class="cat-header bg-blue"><div><span class="cat-num">⑥</span> 카테고리</div><span class="cat-badge">공통</span></div>
+    <div class="food-group"><div class="food-group-label">곡류 · 채소 · 해조류</div><div class="food-tags"><span class="tag tag-6">약콩</span><span class="tag tag-6">가지</span><span class="tag tag-6">오이</span><span class="tag tag-6">미나리</span><span class="tag tag-6">늙은호박</span><span class="tag tag-6">파</span><span class="tag tag-6">마</span><span class="tag tag-6">미역</span><span class="tag tag-6">다시마</span><span class="tag tag-6">김</span><span class="tag tag-6">파래</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일 · 밤</div><div class="food-tags"><span class="tag tag-6">수박</span><span class="tag tag-6">일반포도</span><span class="tag tag-6">밤</span><span class="tag tag-6">곶감(완전건조)</span></div></div>
+    <div class="food-group"><div class="food-group-label">육류 · 해산물</div><div class="food-tags"><span class="tag tag-6">돼지고기</span><span class="tag tag-6">족발</span><span class="tag tag-6">등뼈</span><span class="tag tag-6">삼치</span><span class="tag tag-6">참치</span><span class="tag tag-6">옥돔</span><span class="tag tag-6">광어</span><span class="tag tag-6">우럭</span><span class="tag tag-6">붕어</span><span class="tag tag-6">잉어</span><span class="tag tag-6">해삼</span><span class="tag tag-6">굴</span><span class="tag tag-6">새우</span><span class="tag tag-6">오뎅</span><span class="tag tag-6">사골곰국</span></div></div>
+    <div class="food-group"><div class="food-group-label">양념 · 음료 · 기타</div><div class="food-tags"><span class="tag tag-6">식초</span><span class="tag tag-6">죽염</span><span class="tag tag-6">라벤다차</span><span class="tag tag-6">두유</span><span class="tag tag-6">치즈</span><span class="tag tag-6">카레</span><span class="tag tag-6">두부</span><span class="tag tag-6">오이소박이</span><span class="tag tag-6">말린애호박</span></div></div>
+  </div>
+  <div class="cat-section"><div class="cat-header bg-purple"><div><span class="cat-num">⑥'</span> 카테고리</div><span class="cat-badge">공통</span></div>
+    <div class="food-group"><div class="food-group-label">곡류</div><div class="food-tags"><span class="tag tag-6p">찹쌀</span><span class="tag tag-6p">현미찹쌀</span><span class="tag tag-6p">흑임자(검은깨)</span></div></div>
+    <div class="food-group"><div class="food-group-label">채소</div><div class="food-tags"><span class="tag tag-6p">호박잎</span><span class="tag tag-6p">참나물</span><span class="tag tag-6p">적상추</span><span class="tag tag-6p">양상추</span><span class="tag tag-6p">단호박</span><span class="tag tag-6p">매생이</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일</div><div class="food-tags"><span class="tag tag-6p">머루포도</span><span class="tag tag-6p">매실</span><span class="tag tag-6p">리찌</span></div></div>
+    <div class="food-group"><div class="food-group-label">해산물 · 탕류</div><div class="food-tags"><span class="tag tag-6p">반골곰국(고기없이)</span><span class="tag tag-6p">우족(고기없이)</span><span class="tag tag-6p">도가니</span><span class="tag tag-6p">굴비</span><span class="tag tag-6p">전복</span><span class="tag tag-6p">가물치</span><span class="tag tag-6p">바다가재</span><span class="tag tag-6p">가자미</span><span class="tag tag-6p">전어</span><span class="tag tag-6p">새조개</span></div></div>
+    <div class="food-group"><div class="food-group-label">양념 · 기름 · 기타</div><div class="food-tags"><span class="tag tag-6p">된장</span><span class="tag tag-6p">간장</span><span class="tag tag-6p">청국장</span><span class="tag tag-6p">흑설탕</span><span class="tag tag-6p">포도씨기름</span><span class="tag tag-6p">버터</span></div></div>
+  </div>
+  <div class="divider-label">— DS만 해당 —</div>
+  <div class="cat-section" style="border:2px dashed #00897b"><div class="cat-header bg-teal"><div><span class="cat-num">⑤</span> 카테고리</div><span class="cat-badge">DS만</span></div>
+    <div class="food-group"><div class="food-group-label">곡류 · 콩류</div><div class="food-tags"><span class="tag tag-5">쌀</span><span class="tag tag-5">검은쌀</span><span class="tag tag-5">일반현미</span><span class="tag tag-5">율무</span><span class="tag tag-5">메주콩(흰콩)</span></div></div>
+    <div class="food-group"><div class="food-group-label">채소</div><div class="food-tags"><span class="tag tag-5">고추</span><span class="tag tag-5">피망</span><span class="tag tag-5">마늘</span><span class="tag tag-5">생강</span><span class="tag tag-5">양파</span><span class="tag tag-5">달래</span><span class="tag tag-5">무</span><span class="tag tag-5">배추</span><span class="tag tag-5">청경채</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일</div><div class="food-tags"><span class="tag tag-5">복숭아</span><span class="tag tag-5">배</span></div></div>
+    <div class="food-group"><div class="food-group-label">해산물</div><div class="food-tags"><span class="tag tag-5">멸치</span><span class="tag tag-5">고등어</span><span class="tag tag-5">갈치</span><span class="tag tag-5">꽁치</span><span class="tag tag-5">바지락</span><span class="tag tag-5">대합</span></div></div>
+    <div class="food-group"><div class="food-group-label">양념 · 발효</div><div class="food-tags"><span class="tag tag-5">고추장</span><span class="tag tag-5">고춧가루</span><span class="tag tag-5">수정과</span><span class="tag tag-5">박하</span><span class="tag tag-5">계피</span><span class="tag tag-5">김치</span><span class="tag tag-5">백김치</span><span class="tag tag-5">깍두기</span></div></div>
+  </div>
+</div>
+
+<!-- ==================== JS ==================== -->
+<div id="tab-wife" class="tab-content">
+  <div class="divider-label">— 공통 카테고리 —</div>
+  <div class="cat-section"><div class="cat-header bg-green"><div><span class="cat-num">①</span> 카테고리</div><span class="cat-badge">공통</span></div>
+    <div class="food-group"><div class="food-group-label">곡류 · 견과</div><div class="food-tags"><span class="tag tag-1">밀</span><span class="tag tag-1">녹두</span><span class="tag tag-1">보리</span><span class="tag tag-1">서리태</span><span class="tag tag-1">완두콩</span><span class="tag tag-1">참깨</span><span class="tag tag-1">잣</span><span class="tag tag-1">호두</span><span class="tag tag-1">땅콩</span><span class="tag tag-1">아몬드</span></div></div>
+    <div class="food-group"><div class="food-group-label">채소 · 나물 · 버섯</div><div class="food-tags"><span class="tag tag-1">쑥</span><span class="tag tag-1">열무</span><span class="tag tag-1">순무</span><span class="tag tag-1">갓</span><span class="tag tag-1">부추</span><span class="tag tag-1">치커리</span><span class="tag tag-1">무순</span><span class="tag tag-1">깻잎</span><span class="tag tag-1">민들레잎</span><span class="tag tag-1">다래순</span><span class="tag tag-1">취나물</span><span class="tag tag-1">숙주</span><span class="tag tag-1">브로콜리</span><span class="tag tag-1">새송이</span><span class="tag tag-1">자연산송이</span><span class="tag tag-1">목이버섯</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일</div><div class="food-tags"><span class="tag tag-1">거봉</span><span class="tag tag-1">청포도</span><span class="tag tag-1">딸기</span><span class="tag tag-1">체리</span><span class="tag tag-1">앵두</span><span class="tag tag-1">귤</span><span class="tag tag-1">오렌지</span><span class="tag tag-1">청견</span><span class="tag tag-1">레몬</span><span class="tag tag-1">한라봉</span><span class="tag tag-1">자두</span><span class="tag tag-1">사과</span><span class="tag tag-1">파인애플</span><span class="tag tag-1">그린키위</span><span class="tag tag-1">블루베리</span></div></div>
+    <div class="food-group"><div class="food-group-label">육류 · 해산물 · 계란</div><div class="food-tags"><span class="tag tag-1">닭</span><span class="tag tag-1">미꾸라지</span><span class="tag tag-1">민물장어</span><span class="tag tag-1">다슬기(올갱이)</span><span class="tag tag-1">계란</span></div></div>
+    <div class="food-group"><div class="food-group-label">기름 · 김치류</div><div class="food-tags"><span class="tag tag-1">참기름</span><span class="tag tag-1">올리브유</span><span class="tag tag-1">갓김치</span><span class="tag tag-1">깻잎김치</span><span class="tag tag-1">순무김치</span><span class="tag tag-1">열무김치</span><span class="tag tag-1">부추김치</span></div></div>
+  </div>
+  <div class="cat-section"><div class="cat-header bg-blue"><div><span class="cat-num">⑥</span> 카테고리</div><span class="cat-badge">공통</span></div>
+    <div class="food-group"><div class="food-group-label">곡류 · 채소 · 해조류</div><div class="food-tags"><span class="tag tag-6">약콩</span><span class="tag tag-6">가지</span><span class="tag tag-6">오이</span><span class="tag tag-6">미나리</span><span class="tag tag-6">늙은호박</span><span class="tag tag-6">파</span><span class="tag tag-6">마</span><span class="tag tag-6">미역</span><span class="tag tag-6">다시마</span><span class="tag tag-6">김</span><span class="tag tag-6">파래</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일 · 밤</div><div class="food-tags"><span class="tag tag-6">수박</span><span class="tag tag-6">일반포도</span><span class="tag tag-6">밤</span><span class="tag tag-6">곶감(완전건조)</span></div></div>
+    <div class="food-group"><div class="food-group-label">육류 · 해산물</div><div class="food-tags"><span class="tag tag-6">돼지고기</span><span class="tag tag-6">족발</span><span class="tag tag-6">등뼈</span><span class="tag tag-6">삼치</span><span class="tag tag-6">참치</span><span class="tag tag-6">옥돔</span><span class="tag tag-6">광어</span><span class="tag tag-6">우럭</span><span class="tag tag-6">붕어</span><span class="tag tag-6">잉어</span><span class="tag tag-6">해삼</span><span class="tag tag-6">굴</span><span class="tag tag-6">새우</span><span class="tag tag-6">오뎅</span><span class="tag tag-6">사골곰국</span></div></div>
+    <div class="food-group"><div class="food-group-label">양념 · 음료 · 기타</div><div class="food-tags"><span class="tag tag-6">식초</span><span class="tag tag-6">죽염</span><span class="tag tag-6">라벤다차</span><span class="tag tag-6">두유</span><span class="tag tag-6">치즈</span><span class="tag tag-6">카레</span><span class="tag tag-6">두부</span><span class="tag tag-6">오이소박이</span><span class="tag tag-6">말린애호박</span></div></div>
+  </div>
+  <div class="cat-section"><div class="cat-header bg-purple"><div><span class="cat-num">⑥'</span> 카테고리</div><span class="cat-badge">공통</span></div>
+    <div class="food-group"><div class="food-group-label">곡류</div><div class="food-tags"><span class="tag tag-6p">찹쌀</span><span class="tag tag-6p">현미찹쌀</span><span class="tag tag-6p">흑임자(검은깨)</span></div></div>
+    <div class="food-group"><div class="food-group-label">채소</div><div class="food-tags"><span class="tag tag-6p">호박잎</span><span class="tag tag-6p">참나물</span><span class="tag tag-6p">적상추</span><span class="tag tag-6p">양상추</span><span class="tag tag-6p">단호박</span><span class="tag tag-6p">매생이</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일</div><div class="food-tags"><span class="tag tag-6p">머루포도</span><span class="tag tag-6p">매실</span><span class="tag tag-6p">리찌</span></div></div>
+    <div class="food-group"><div class="food-group-label">해산물 · 탕류</div><div class="food-tags"><span class="tag tag-6p">반골곰국(고기없이)</span><span class="tag tag-6p">우족(고기없이)</span><span class="tag tag-6p">도가니</span><span class="tag tag-6p">굴비</span><span class="tag tag-6p">전복</span><span class="tag tag-6p">가물치</span><span class="tag tag-6p">바다가재</span><span class="tag tag-6p">가자미</span><span class="tag tag-6p">전어</span><span class="tag tag-6p">새조개</span></div></div>
+    <div class="food-group"><div class="food-group-label">양념 · 기름 · 기타</div><div class="food-tags"><span class="tag tag-6p">된장</span><span class="tag tag-6p">간장</span><span class="tag tag-6p">청국장</span><span class="tag tag-6p">흑설탕</span><span class="tag tag-6p">포도씨기름</span><span class="tag tag-6p">버터</span></div></div>
+  </div>
+  <div class="divider-label">— JS만 해당 —</div>
+  <div class="cat-section" style="border:2px dashed #e91e63"><div class="cat-header bg-pink"><div><span class="cat-num">②</span> 카테고리</div><span class="cat-badge">JS만</span></div>
+    <div class="food-group"><div class="food-group-label">곡류</div><div class="food-tags"><span class="tag tag-2">옥수수</span><span class="tag tag-2">팥</span><span class="tag tag-2">조</span><span class="tag tag-2">들깨</span><span class="tag tag-2">도토리</span></div></div>
+    <div class="food-group"><div class="food-group-label">채소</div><div class="food-tags"><span class="tag tag-2">두릅</span><span class="tag tag-2">고사리</span><span class="tag tag-2">고들빼기</span><span class="tag tag-2">냉이</span><span class="tag tag-2">일반버섯</span><span class="tag tag-2">양배추</span><span class="tag tag-2">당근</span><span class="tag tag-2">우엉</span><span class="tag tag-2">연근</span><span class="tag tag-2">파세리</span><span class="tag tag-2">아스파라거스</span><span class="tag tag-2">감자</span><span class="tag tag-2">겨자채</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일</div><div class="food-tags"><span class="tag tag-2">머루</span><span class="tag tag-2">바나나</span><span class="tag tag-2">서양자두</span><span class="tag tag-2">오디</span></div></div>
+    <div class="food-group"><div class="food-group-label">육류 · 해산물</div><div class="food-tags"><span class="tag tag-2">꿩</span><span class="tag tag-2">오리</span><span class="tag tag-2">칠면조</span><span class="tag tag-2">홍합</span><span class="tag tag-2">피조개(꼬막)</span><span class="tag tag-2">멍게</span><span class="tag tag-2">오징어</span><span class="tag tag-2">꽃게</span><span class="tag tag-2">대구</span><span class="tag tag-2">명태</span><span class="tag tag-2">생태</span><span class="tag tag-2">북어</span><span class="tag tag-2">황태</span><span class="tag tag-2">연어</span></div></div>
+    <div class="food-group"><div class="food-group-label">기름 · 음료</div><div class="food-tags"><span class="tag tag-2">들기름</span><span class="tag tag-2">녹차</span><span class="tag tag-2">요구르트</span><span class="tag tag-2">자스민차</span></div></div>
+  </div>
+</div>
+
+<!-- ==================== 공통식재료 ==================== -->
+<div id="tab-common" class="tab-content">
+  <div class="note-top allergy-note"><strong>알레르기 제외:</strong> 밀/밀가루, 땅콩 — 공통 식재료에서 제외됨</div>
+  <div class="divider-label">— 두 분 모두 섭취 가능 —</div>
+  <div class="cat-section"><div class="cat-header bg-orange"><div><span class="cat-num">①</span> 카테고리</div></div>
+    <div class="food-group"><div class="food-group-label">곡류 · 견과 (밀·땅콩 제외)</div><div class="food-tags"><span class="tag tag-1">녹두</span><span class="tag tag-1">보리</span><span class="tag tag-1">서리태</span><span class="tag tag-1">완두콩</span><span class="tag tag-1">참깨</span><span class="tag tag-1">잣</span><span class="tag tag-1">호두</span><span class="tag tag-1">아몬드</span></div></div>
+    <div class="food-group"><div class="food-group-label">채소 · 나물 · 버섯</div><div class="food-tags"><span class="tag tag-1">쑥</span><span class="tag tag-1">열무</span><span class="tag tag-1">순무</span><span class="tag tag-1">갓</span><span class="tag tag-1">부추</span><span class="tag tag-1">치커리</span><span class="tag tag-1">무순</span><span class="tag tag-1">깻잎</span><span class="tag tag-1">민들레잎</span><span class="tag tag-1">다래순</span><span class="tag tag-1">취나물</span><span class="tag tag-1">숙주</span><span class="tag tag-1">브로콜리</span><span class="tag tag-1">새송이</span><span class="tag tag-1">자연산송이</span><span class="tag tag-1">목이버섯</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일</div><div class="food-tags"><span class="tag tag-1">거봉</span><span class="tag tag-1">청포도</span><span class="tag tag-1">딸기</span><span class="tag tag-1">체리</span><span class="tag tag-1">앵두</span><span class="tag tag-1">귤</span><span class="tag tag-1">오렌지</span><span class="tag tag-1">청견</span><span class="tag tag-1">레몬</span><span class="tag tag-1">한라봉</span><span class="tag tag-1">자두</span><span class="tag tag-1">사과</span><span class="tag tag-1">파인애플</span><span class="tag tag-1">그린키위</span><span class="tag tag-1">블루베리</span></div></div>
+    <div class="food-group"><div class="food-group-label">육류 · 해산물 · 계란</div><div class="food-tags"><span class="tag tag-1">닭</span><span class="tag tag-1">미꾸라지</span><span class="tag tag-1">민물장어</span><span class="tag tag-1">다슬기(올갱이)</span><span class="tag tag-1">계란</span></div></div>
+    <div class="food-group"><div class="food-group-label">기름 · 김치류</div><div class="food-tags"><span class="tag tag-1">참기름</span><span class="tag tag-1">올리브유</span><span class="tag tag-1">갓김치</span><span class="tag tag-1">깻잎김치</span><span class="tag tag-1">순무김치</span><span class="tag tag-1">열무김치</span><span class="tag tag-1">부추김치</span></div></div>
+  </div>
+  <div class="cat-section"><div class="cat-header bg-orange"><div><span class="cat-num">⑥</span> 카테고리</div></div>
+    <div class="food-group"><div class="food-group-label">곡류 · 채소 · 해조류</div><div class="food-tags"><span class="tag tag-6">약콩</span><span class="tag tag-6">가지</span><span class="tag tag-6">오이</span><span class="tag tag-6">미나리</span><span class="tag tag-6">늙은호박</span><span class="tag tag-6">파</span><span class="tag tag-6">마</span><span class="tag tag-6">미역</span><span class="tag tag-6">다시마</span><span class="tag tag-6">김</span><span class="tag tag-6">파래</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일 · 밤</div><div class="food-tags"><span class="tag tag-6">수박</span><span class="tag tag-6">일반포도</span><span class="tag tag-6">밤</span><span class="tag tag-6">곶감(완전건조)</span></div></div>
+    <div class="food-group"><div class="food-group-label">육류 · 해산물</div><div class="food-tags"><span class="tag tag-6">돼지고기</span><span class="tag tag-6">족발</span><span class="tag tag-6">등뼈</span><span class="tag tag-6">삼치</span><span class="tag tag-6">참치</span><span class="tag tag-6">옥돔</span><span class="tag tag-6">광어</span><span class="tag tag-6">우럭</span><span class="tag tag-6">붕어</span><span class="tag tag-6">잉어</span><span class="tag tag-6">해삼</span><span class="tag tag-6">굴</span><span class="tag tag-6">새우</span><span class="tag tag-6">오뎅</span><span class="tag tag-6">사골곰국</span></div></div>
+    <div class="food-group"><div class="food-group-label">양념 · 음료 · 기타</div><div class="food-tags"><span class="tag tag-6">식초</span><span class="tag tag-6">죽염</span><span class="tag tag-6">라벤다차</span><span class="tag tag-6">두유</span><span class="tag tag-6">치즈</span><span class="tag tag-6">카레</span><span class="tag tag-6">두부</span><span class="tag tag-6">오이소박이</span><span class="tag tag-6">말린애호박</span></div></div>
+  </div>
+  <div class="cat-section"><div class="cat-header bg-orange"><div><span class="cat-num">⑥'</span> 카테고리</div></div>
+    <div class="food-group"><div class="food-group-label">곡류</div><div class="food-tags"><span class="tag tag-6p">찹쌀</span><span class="tag tag-6p">현미찹쌀</span><span class="tag tag-6p">흑임자(검은깨)</span></div></div>
+    <div class="food-group"><div class="food-group-label">채소</div><div class="food-tags"><span class="tag tag-6p">호박잎</span><span class="tag tag-6p">참나물</span><span class="tag tag-6p">적상추</span><span class="tag tag-6p">양상추</span><span class="tag tag-6p">단호박</span><span class="tag tag-6p">매생이</span></div></div>
+    <div class="food-group"><div class="food-group-label">과일</div><div class="food-tags"><span class="tag tag-6p">머루포도</span><span class="tag tag-6p">매실</span><span class="tag tag-6p">리찌</span></div></div>
+    <div class="food-group"><div class="food-group-label">해산물 · 탕류</div><div class="food-tags"><span class="tag tag-6p">반골곰국(고기없이)</span><span class="tag tag-6p">우족(고기없이)</span><span class="tag tag-6p">도가니</span><span class="tag tag-6p">굴비</span><span class="tag tag-6p">전복</span><span class="tag tag-6p">가물치</span><span class="tag tag-6p">바다가재</span><span class="tag tag-6p">가자미</span><span class="tag tag-6p">전어</span><span class="tag tag-6p">새조개</span></div></div>
+    <div class="food-group"><div class="food-group-label">양념 · 기름 · 기타</div><div class="food-tags"><span class="tag tag-6p">된장</span><span class="tag tag-6p">간장</span><span class="tag tag-6p">청국장</span><span class="tag tag-6p">흑설탕</span><span class="tag tag-6p">포도씨기름</span><span class="tag tag-6p">버터</span></div></div>
+  </div>
+  <div class="note-box">
+    <strong>참고사항</strong><br>
+    · ✕표 음식도 전체의 20~30% 비율까지는 큰 탈 없음<br>
+    · 단, <strong>✕표 카테고리의 육류는 가급적 피하고 최대 10% 이내</strong>로 섭취<br>
+    · <strong style="color:#ff9800;">주황 테두리</strong> = 육류 (과식 주의)<br>
+    · 화학조미료·감미료 섭취는 가급적 피할 것<br>
+    · 채소와 과일은 전체 음식 섭취량의 약 70% 비율 권장
+  </div>
+</div>
+
+<!-- ==================== 공통식단 ==================== -->
+<div id="tab-menu" class="tab-content">
+  <div class="note-top allergy-note"><strong>밀가루·땅콩 제외:</strong> 전·부침은 녹두가루/찹쌀가루, 면류는 녹두면/보리면으로 대체</div>
+
+  <div class="menu-section-title">🍚 밥 · 죽 <span class="cnt">10가지</span></div>
+  <div class="menu-grid">
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">보리밥</div><div class="mc-desc">보리+찹쌀 건강 잡곡밥</div><div class="mc-ings"><span class="mi mi-1">보리</span><span class="mi mi-6p">찹쌀</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">서리태밥</div><div class="mc-desc">서리태콩과 찹쌀의 고소한 콩밥</div><div class="mc-ings"><span class="mi mi-6p">찹쌀</span><span class="mi mi-1">서리태</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">밤찹쌀밥</div><div class="mc-desc">밤의 달콤함과 찹쌀의 찰진 식감</div><div class="mc-ings"><span class="mi mi-6p">찹쌀</span><span class="mi mi-6">밤</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">굴밥</div><div class="mc-desc">통통한 굴을 넣어 지은 영양 솥밥</div><div class="mc-ings"><span class="mi mi-6p">찹쌀</span><span class="mi mi-6">굴</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">전복솥밥</div><div class="mc-desc">전복과 찹쌀, 간장 양념장</div><div class="mc-ings"><span class="mi mi-6p">전복</span><span class="mi mi-6p">찹쌀</span><span class="mi mi-1">참기름</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">김밥 (찹쌀)</div><div class="mc-desc">김+찹쌀+계란+오이+깻잎</div><div class="mc-ings"><span class="mi mi-6">김</span><span class="mi mi-6p">찹쌀</span><span class="mi mi-1">계란</span><span class="mi mi-6">오이</span><span class="mi mi-1">깻잎</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">단호박죽</div><div class="mc-desc">단호박+찹쌀 달콤한 죽</div><div class="mc-ings"><span class="mi mi-6p">단호박</span><span class="mi mi-6p">찹쌀</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">전복죽</div><div class="mc-desc">전복+찹쌀 보양 죽</div><div class="mc-ings"><span class="mi mi-6p">전복</span><span class="mi mi-6p">찹쌀</span><span class="mi mi-1">참기름</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">녹두죽</div><div class="mc-desc">녹두를 갈아 만든 해독 죽</div><div class="mc-ings"><span class="mi mi-1">녹두</span><span class="mi mi-6p">찹쌀</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-rice"></div><div class="mc-body"><div class="mc-name">잣죽 / 흑임자죽</div><div class="mc-desc">잣 또는 검은깨 고소한 죽</div><div class="mc-ings"><span class="mi mi-1">잣</span><span class="mi mi-6p">흑임자</span><span class="mi mi-6p">찹쌀</span></div></div></div>
+  </div>
+
+  <div class="menu-section-title">🍲 국 · 찌개 · 탕 <span class="cnt">14가지</span></div>
+  <div class="menu-grid">
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">닭백숙/닭한마리</div><div class="mc-desc">닭+파+밤+찹쌀 보양식</div><div class="mc-ings"><span class="mi mi-1">닭</span><span class="mi mi-6">파</span><span class="mi mi-6">밤</span><span class="mi mi-6p">찹쌀</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">된장국</div><div class="mc-desc">된장+두부+파+미역</div><div class="mc-ings"><span class="mi mi-6p">된장</span><span class="mi mi-6">두부</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">청국장찌개</div><div class="mc-desc">청국장+두부+늙은호박</div><div class="mc-ings"><span class="mi mi-6p">청국장</span><span class="mi mi-6">두부</span><span class="mi mi-6">늙은호박</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">미역국(굴)</div><div class="mc-desc">미역+굴 간장 미역국</div><div class="mc-ings"><span class="mi mi-6">미역</span><span class="mi mi-6">굴</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">매생이굴국</div><div class="mc-desc">매생이+굴 바다 향 국</div><div class="mc-ings"><span class="mi mi-6p">매생이</span><span class="mi mi-6">굴</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">계란국</div><div class="mc-desc">계란+파+김 간단 국</div><div class="mc-ings"><span class="mi mi-1">계란</span><span class="mi mi-6">파</span><span class="mi mi-6">김</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">파래국</div><div class="mc-desc">파래+된장 시원한 국</div><div class="mc-ings"><span class="mi mi-6">파래</span><span class="mi mi-6p">된장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">도가니탕</div><div class="mc-desc">도가니 콜라겐 보양탕</div><div class="mc-ings"><span class="mi mi-6p">도가니</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">등뼈해장국</div><div class="mc-desc">등뼈+된장+늙은호박</div><div class="mc-ings"><span class="mi mi-6">등뼈</span><span class="mi mi-6p">된장</span><span class="mi mi-6">늙은호박</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">추어탕</div><div class="mc-desc">미꾸라지+된장+부추</div><div class="mc-ings"><span class="mi mi-1">미꾸라지</span><span class="mi mi-6p">된장</span><span class="mi mi-1">부추</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">가물치탕</div><div class="mc-desc">가물치 산후 보양탕</div><div class="mc-ings"><span class="mi mi-6p">가물치</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">다슬기국</div><div class="mc-desc">다슬기+된장+부추 해장국</div><div class="mc-ings"><span class="mi mi-1">다슬기</span><span class="mi mi-6p">된장</span><span class="mi mi-1">부추</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">늙은호박국</div><div class="mc-desc">늙은호박+된장+두부</div><div class="mc-ings"><span class="mi mi-6">늙은호박</span><span class="mi mi-6p">된장</span><span class="mi mi-6">두부</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">오뎅탕</div><div class="mc-desc">다시마 육수+오뎅</div><div class="mc-ings"><span class="mi mi-6">오뎅</span><span class="mi mi-6">다시마</span><span class="mi mi-6">파</span></div></div></div>
+  </div>
+
+  <div class="menu-section-title">🍜 면 <span class="cnt">3가지 (녹두면/보리면)</span></div>
+  <div class="menu-grid">
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">녹두국수</div><div class="mc-desc">녹두면+다시마 육수+파</div><div class="mc-ings"><span class="mi mi-1">녹두면</span><span class="mi mi-6">다시마</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">해물녹두국수</div><div class="mc-desc">새우·굴+녹두면 따뜻한 국수</div><div class="mc-ings"><span class="mi mi-1">녹두면</span><span class="mi mi-6">새우</span><span class="mi mi-6">굴</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-soup"></div><div class="mc-body"><div class="mc-name">보리냉면풍</div><div class="mc-desc">보리면+식초+간장+오이+계란</div><div class="mc-ings"><span class="mi mi-1">보리면</span><span class="mi mi-6">오이</span><span class="mi mi-6">식초</span><span class="mi mi-1">계란</span></div></div></div>
+  </div>
+
+  <div class="menu-section-title">🔥 구이 · 조림 <span class="cnt">14가지</span></div>
+  <div class="menu-grid">
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">삼치구이</div><div class="mc-desc">소금 간 바삭하게</div><div class="mc-ings"><span class="mi mi-6">삼치</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">굴비구이</div><div class="mc-desc">간 굴비 바삭하게</div><div class="mc-ings"><span class="mi mi-6p">굴비</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">전어구이</div><div class="mc-desc">가을 전어 구이</div><div class="mc-ings"><span class="mi mi-6p">전어</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">우럭구이</div><div class="mc-desc">흰살 생선 소금구이/간장구이</div><div class="mc-ings"><span class="mi mi-6">우럭</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">가자미구이/조림</div><div class="mc-desc">담백한 가자미</div><div class="mc-ings"><span class="mi mi-6p">가자미</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">삼치조림</div><div class="mc-desc">간장 양념 조림</div><div class="mc-ings"><span class="mi mi-6">삼치</span><span class="mi mi-6p">간장</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">민물장어구이</div><div class="mc-desc">간장 양념 보양 장어</div><div class="mc-ings"><span class="mi mi-1">민물장어</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">닭간장구이</div><div class="mc-desc">간장+참기름 양념 닭</div><div class="mc-ings"><span class="mi mi-1">닭</span><span class="mi mi-6p">간장</span><span class="mi mi-1">참기름</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">닭볶음(간장)</div><div class="mc-desc">간장 양념+밤+파</div><div class="mc-ings"><span class="mi mi-1">닭</span><span class="mi mi-6p">간장</span><span class="mi mi-6">밤</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">돼지간장불고기</div><div class="mc-desc">간장 베이스 돼지구이</div><div class="mc-ings"><span class="mi mi-6">돼지고기</span><span class="mi mi-6p">간장</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">돼지수육</div><div class="mc-desc">삶은 돼지+깻잎쌈+된장</div><div class="mc-ings"><span class="mi mi-6">돼지고기</span><span class="mi mi-6p">된장</span><span class="mi mi-1">깻잎</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">전복버터구이</div><div class="mc-desc">버터+간장 전복구이</div><div class="mc-ings"><span class="mi mi-6p">전복</span><span class="mi mi-6p">버터</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">두부구이/조림</div><div class="mc-desc">간장 소스 두부</div><div class="mc-ings"><span class="mi mi-6">두부</span><span class="mi mi-6p">간장</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-grill"></div><div class="mc-body"><div class="mc-name">닭강정(간장)</div><div class="mc-desc">간장+흑설탕+견과 토핑</div><div class="mc-ings"><span class="mi mi-m">닭</span><span class="mi mi-6p">간장</span><span class="mi mi-6p">흑설탕</span><span class="mi mi-1">호두</span></div></div></div>
+  </div>
+
+  <div class="menu-section-title">🥞 전 · 부침 (녹두가루/찹쌀가루) <span class="cnt">10가지</span></div>
+  <div class="menu-grid">
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">녹두전(빈대떡)</div><div class="mc-desc">녹두+숙주+돼지고기</div><div class="mc-ings"><span class="mi mi-1">녹두</span><span class="mi mi-1">숙주</span><span class="mi mi-6">돼지고기</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">부추전</div><div class="mc-desc">부추+녹두가루+계란</div><div class="mc-ings"><span class="mi mi-1">부추</span><span class="mi mi-1">녹두가루</span><span class="mi mi-1">계란</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">해물파전</div><div class="mc-desc">파+새우+굴+녹두가루</div><div class="mc-ings"><span class="mi mi-6">파</span><span class="mi mi-6">새우</span><span class="mi mi-6">굴</span><span class="mi mi-1">녹두가루</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">깻잎전</div><div class="mc-desc">깻잎+두부소+찹쌀가루</div><div class="mc-ings"><span class="mi mi-1">깻잎</span><span class="mi mi-6">두부</span><span class="mi mi-6p">찹쌀가루</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">새송이전</div><div class="mc-desc">새송이+계란+찹쌀가루</div><div class="mc-ings"><span class="mi mi-1">새송이</span><span class="mi mi-1">계란</span><span class="mi mi-6p">찹쌀가루</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">호박전</div><div class="mc-desc">늙은호박+녹두가루</div><div class="mc-ings"><span class="mi mi-6">늙은호박</span><span class="mi mi-1">계란</span><span class="mi mi-1">녹두가루</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">굴전</div><div class="mc-desc">굴+계란+찹쌀가루</div><div class="mc-ings"><span class="mi mi-6">굴</span><span class="mi mi-1">계란</span><span class="mi mi-6p">찹쌀가루</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">새우전</div><div class="mc-desc">새우+계란+녹두가루</div><div class="mc-ings"><span class="mi mi-6">새우</span><span class="mi mi-1">계란</span><span class="mi mi-1">녹두가루</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">계란말이</div><div class="mc-desc">계란+파</div><div class="mc-ings"><span class="mi mi-1">계란</span><span class="mi mi-6">파</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-jeon"></div><div class="mc-body"><div class="mc-name">가지전</div><div class="mc-desc">가지+찹쌀가루+계란</div><div class="mc-ings"><span class="mi mi-6">가지</span><span class="mi mi-6p">찹쌀가루</span><span class="mi mi-1">계란</span></div></div></div>
+  </div>
+
+  <div class="menu-section-title">🥬 나물 · 반찬 <span class="cnt">14가지</span></div>
+  <div class="menu-grid">
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">숙주나물</div><div class="mc-ings"><span class="mi mi-1">숙주</span><span class="mi mi-1">참기름</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">취나물무침</div><div class="mc-ings"><span class="mi mi-1">취나물</span><span class="mi mi-6p">된장</span><span class="mi mi-1">참기름</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">미나리무침</div><div class="mc-ings"><span class="mi mi-6">미나리</span><span class="mi mi-6p">간장</span><span class="mi mi-6">식초</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">가지나물</div><div class="mc-ings"><span class="mi mi-6">가지</span><span class="mi mi-6p">간장</span><span class="mi mi-1">참기름</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">브로콜리무침</div><div class="mc-ings"><span class="mi mi-1">브로콜리</span><span class="mi mi-1">참기름</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">참나물무침</div><div class="mc-ings"><span class="mi mi-6p">참나물</span><span class="mi mi-6p">간장</span><span class="mi mi-1">참기름</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">부추무침</div><div class="mc-ings"><span class="mi mi-1">부추</span><span class="mi mi-6p">간장</span><span class="mi mi-6">식초</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">깻잎장아찌</div><div class="mc-ings"><span class="mi mi-1">깻잎</span><span class="mi mi-6p">간장</span><span class="mi mi-6">식초</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">호박잎쌈</div><div class="mc-ings"><span class="mi mi-6p">호박잎</span><span class="mi mi-6p">된장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">새송이볶음</div><div class="mc-ings"><span class="mi mi-1">새송이</span><span class="mi mi-6p">버터</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">오이무침</div><div class="mc-ings"><span class="mi mi-6">오이</span><span class="mi mi-6p">간장</span><span class="mi mi-6">식초</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">파래무침</div><div class="mc-ings"><span class="mi mi-6">파래</span><span class="mi mi-6">식초</span><span class="mi mi-1">참기름</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">미역줄기볶음</div><div class="mc-ings"><span class="mi mi-6">미역</span><span class="mi mi-6p">간장</span><span class="mi mi-1">참기름</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-side"></div><div class="mc-body"><div class="mc-name">오이소박이</div><div class="mc-ings"><span class="mi mi-6">오이</span><span class="mi mi-1">부추</span></div></div></div>
+  </div>
+
+  <div class="menu-section-title">⭐ 특선 <span class="cnt">12가지</span></div>
+  <div class="menu-grid">
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">족발</div><div class="mc-ings"><span class="mi mi-6">족발</span><span class="mi mi-1">깻잎</span><span class="mi mi-6p">된장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">새우버터구이</div><div class="mc-ings"><span class="mi mi-6">새우</span><span class="mi mi-6p">버터</span><span class="mi mi-1">레몬</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">바다가재찜</div><div class="mc-ings"><span class="mi mi-6p">바다가재</span><span class="mi mi-6p">버터</span><span class="mi mi-1">레몬</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">해물찜</div><div class="mc-ings"><span class="mi mi-6">새우</span><span class="mi mi-6p">전복</span><span class="mi mi-6">굴</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">참치/광어 회</div><div class="mc-ings"><span class="mi mi-6">참치</span><span class="mi mi-6">광어</span><span class="mi mi-6p">간장</span><span class="mi mi-1">깻잎</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">카레(닭/돼지)</div><div class="mc-ings"><span class="mi mi-1">닭/돼지</span><span class="mi mi-6">카레</span><span class="mi mi-6">늙은호박</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">닭강정(간장)</div><div class="mc-ings"><span class="mi mi-m">닭</span><span class="mi mi-6p">간장</span><span class="mi mi-6p">흑설탕</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">해삼초회</div><div class="mc-ings"><span class="mi mi-6">해삼</span><span class="mi mi-6">식초</span><span class="mi mi-6p">간장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">다시마쌈밥</div><div class="mc-ings"><span class="mi mi-6">다시마</span><span class="mi mi-6p">찹쌀</span><span class="mi mi-1">깻잎</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">쌈밥정식</div><div class="mc-ings"><span class="mi mi-6p">양상추</span><span class="mi mi-1">깻잎</span><span class="mi mi-6p">호박잎</span><span class="mi mi-6p">된장</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">해물찹쌀밥</div><div class="mc-ings"><span class="mi mi-6p">찹쌀</span><span class="mi mi-6p">전복</span><span class="mi mi-6">새우</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-special"></div><div class="mc-body"><div class="mc-name">새우튀김(찹쌀)</div><div class="mc-desc">찹쌀가루 반죽 바삭 튀김</div><div class="mc-ings"><span class="mi mi-6">새우</span><span class="mi mi-6p">찹쌀가루</span><span class="mi mi-1">계란</span></div></div></div>
+  </div>
+
+  <div class="menu-section-title">🍵 간식 · 음료 <span class="cnt">8가지</span></div>
+  <div class="menu-grid">
+    <div class="mc"><div class="mc-bar bar-dessert"></div><div class="mc-body"><div class="mc-name">단호박찹쌀떡</div><div class="mc-ings"><span class="mi mi-6p">단호박</span><span class="mi mi-6p">찹쌀</span><span class="mi mi-1">참깨</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-dessert"></div><div class="mc-body"><div class="mc-name">쑥떡</div><div class="mc-ings"><span class="mi mi-1">쑥</span><span class="mi mi-6p">찹쌀</span><span class="mi mi-6p">흑설탕</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-dessert"></div><div class="mc-body"><div class="mc-name">호두잣강정</div><div class="mc-ings"><span class="mi mi-1">호두</span><span class="mi mi-1">잣</span><span class="mi mi-6p">흑설탕</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-dessert"></div><div class="mc-body"><div class="mc-name">밤양갱</div><div class="mc-ings"><span class="mi mi-6">밤</span><span class="mi mi-6">약콩</span><span class="mi mi-6p">흑설탕</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-dessert"></div><div class="mc-body"><div class="mc-name">매실차</div><div class="mc-ings"><span class="mi mi-6p">매실</span><span class="mi mi-6p">흑설탕</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-dessert"></div><div class="mc-body"><div class="mc-name">과일 플레이트</div><div class="mc-ings"><span class="mi mi-1">사과</span><span class="mi mi-1">딸기</span><span class="mi mi-1">블루베리</span><span class="mi mi-1">귤</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-dessert"></div><div class="mc-body"><div class="mc-name">치즈견과 플레이트</div><div class="mc-ings"><span class="mi mi-6">치즈</span><span class="mi mi-1">호두</span><span class="mi mi-1">아몬드</span></div></div></div>
+    <div class="mc"><div class="mc-bar bar-dessert"></div><div class="mc-body"><div class="mc-name">두유 / 라벤다차</div><div class="mc-ings"><span class="mi mi-6">두유</span><span class="mi mi-6">라벤다차</span></div></div></div>
+  </div>
+
+  <div class="tip-box">
+    <h3>양념 & 조리 팁 (밀가루·땅콩 제외 버전)</h3>
+    <div class="tip-item">부침가루 대체: <strong>녹두가루 또는 찹쌀가루</strong> 사용</div>
+    <div class="tip-item">면 대체: <strong>녹두면(녹두국수) 또는 보리면</strong></div>
+    <div class="tip-item">기본 양념: <strong>간장 + 참기름 + 참깨 + 파</strong></div>
+    <div class="tip-item">단맛: <strong>흑설탕 · 매실청</strong></div>
+    <div class="tip-item">기름: 참기름 · 올리브유 · 포도씨기름 · 버터</div>
+  </div>
+</div>
+
+<!-- ==================== 하루 가이드 ==================== -->
+<div id="tab-guide" class="tab-content">
+
+  <div class="note-top guide-note">
+    <strong>180cm, 78kg → 74kg</strong> | 2끼(점심11~12시·저녁5~6시) + 간식 | 탄30·단40·지30 | 감량기 2,000 → 유지기 2,400kcal
+  </div>
+
+  <!-- 매크로 비율 -->
+  <div class="guide-card">
+    <div class="guide-header bg-macro">📊 영양소 배분 (탄30 · 단40 · 지30)</div>
+    <div class="macro-bar">
+      <div class="macro-carb" style="width:30%">탄수 30%</div>
+      <div class="macro-protein" style="width:40%">단백 40%</div>
+      <div class="macro-fat" style="width:30%">지방 30%</div>
+    </div>
+    <div class="macro-legend" style="border-bottom:1px solid #eee;padding-bottom:12px">
+      <span style="font-weight:700;color:#e65100">🔥 감량기 2,000 kcal</span>
+      <span><span class="macro-dot" style="background:#ff9800"></span>탄수 150g</span>
+      <span><span class="macro-dot" style="background:#4caf50"></span>단백 200g</span>
+      <span><span class="macro-dot" style="background:#2196f3"></span>지방 67g</span>
+    </div>
+    <div class="macro-legend">
+      <span style="font-weight:700;color:#00695c">✅ 유지기 2,400 kcal</span>
+      <span><span class="macro-dot" style="background:#ff9800"></span>탄수 180g</span>
+      <span><span class="macro-dot" style="background:#4caf50"></span>단백 240g</span>
+      <span><span class="macro-dot" style="background:#2196f3"></span>지방 80g</span>
+    </div>
+    <div class="food-group">
+      <div class="food-group-label">탄수화물 주요 소스 (밀가루 제외) — 하루 150~180g</div>
+      <div class="food-tags"><span class="tag tag-6p">찹쌀밥 1공기(200g) = 약 300kcal / 탄수 66g</span><span class="tag tag-1">보리밥 1공기 = 약 280kcal / 탄수 60g</span><span class="tag tag-6p">단호박 200g = 약 90kcal / 탄수 20g</span><span class="tag tag-6">밤 5개 = 약 100kcal / 탄수 22g</span><span class="tag tag-1">과일 1주먹 = 약 60kcal / 탄수 15g</span></div>
+    </div>
+    <div class="food-group">
+      <div class="food-group-label">단백질 주요 소스 — 하루 200~240g (저퓨린 위주)</div>
+      <div class="food-tags"><span class="tag tag-1">닭가슴살 100g = 165kcal / 단백 31g</span><span class="tag tag-6">삼치 1토막(100g) = 180kcal / 단백 25g</span><span class="tag tag-1">계란 1개 = 70kcal / 단백 6g</span><span class="tag tag-6">두부 반모(150g) = 130kcal / 단백 14g</span><span class="tag tag-6p">전복 3개 = 80kcal / 단백 17g</span><span class="tag tag-6">새우 100g = 85kcal / 단백 18g</span></div>
+    </div>
+    <div class="food-group">
+      <div class="food-group-label">지방 주요 소스 — 하루 67~80g</div>
+      <div class="food-tags"><span class="tag tag-1">참기름 1큰술 = 120kcal / 지방 14g</span><span class="tag tag-1">올리브유 1큰술 = 120kcal / 지방 14g</span><span class="tag tag-1">호두 10알 = 130kcal / 지방 13g</span><span class="tag tag-1">아몬드 15알 = 100kcal / 지방 9g</span><span class="tag tag-6p">버터 1큰술 = 100kcal / 지방 11g</span></div>
+    </div>
+  </div>
+
+  <!-- 페이즈 선택 -->
+  <div class="day-selector">
+    <button class="day-btn active" onclick="showPhase('cut')" style="border-color:#e65100;color:#e65100;font-weight:800">🔥 감량기 2,000kcal</button>
+    <button class="day-btn" onclick="showPhase('maintain')" style="border-color:#00695c;color:#00695c;font-weight:800">✅ 유지기 2,400kcal</button>
+  </div>
+
+  <!-- ========== 감량기 ========== -->
+  <div id="phase-cut" class="phase-content" style="display:block">
+    <div style="text-align:center;padding:8px 0 16px;font-size:13px;color:#e65100;font-weight:600">78→74kg · 월 1~1.5kg · 약 3개월 · 점심(11~12시) + 간식(2~3시) + 저녁(5~6시)</div>
+
+    <div class="day-selector">
+      <button class="day-btn active" onclick="showDay('ca')">A. 생선 위주</button>
+      <button class="day-btn" onclick="showDay('cb')">B. 닭 위주</button>
+      <button class="day-btn" onclick="showDay('cc')">C. 두부·해물</button>
+    </div>
+
+    <!-- Cut Day A -->
+    <div id="day-ca" class="day-content active">
+      <div class="guide-card">
+        <div class="guide-header bg-meal-b">🍽️ 점심 11~12시 (약 850 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">보리+찹쌀밥</div><div class="meal-amount">1공기 (200g)</div><div class="meal-kcal">~300 kcal · 탄66g</div></div>
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">삼치구이 + 계란 2개</div><div class="meal-amount">삼치 120g + 삶은계란</div><div class="meal-kcal">~350 kcal · 단42g</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">된장국 (두부·파)</div><div class="meal-amount">1공기</div><div class="meal-kcal">~80 kcal · 단6g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">숙주나물 + 깻잎장아찌 + 브로콜리무침</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~70 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">사과 반개</div><div class="meal-amount">중간 크기</div><div class="meal-kcal">~50 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-s">🥜 간식 2~3시 (약 350 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">닭가슴살 샐러드 (양상추+브로콜리)</div><div class="meal-amount">닭가슴살 120g</div><div class="meal-kcal">~200 kcal · 단37g</div></div>
+          <div class="meal-item"><div class="meal-cat">견과</div><div class="meal-food">호두 5알 + 아몬드 5알</div><div class="meal-amount">한줌 (약 20g)</div><div class="meal-kcal">~130 kcal · 지방12g</div></div>
+          <div class="meal-item"><div class="meal-cat">음료</div><div class="meal-food">매실차 or 두유</div><div class="meal-amount">1잔</div><div class="meal-kcal">~20 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-c">🌙 저녁 5~6시 (약 800 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">서리태찹쌀밥</div><div class="meal-amount">0.7공기 (140g)</div><div class="meal-kcal">~220 kcal · 탄45g</div></div>
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">가자미구이 + 두부구이</div><div class="meal-amount">가자미 120g + 두부반모</div><div class="meal-kcal">~330 kcal · 단48g</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">매생이굴국</div><div class="meal-amount">1공기</div><div class="meal-kcal">~70 kcal · 단8g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">가지나물 + 취나물 + 미나리무침</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">기름</div><div class="meal-food">참기름</div><div class="meal-amount">0.5큰술</div><div class="meal-kcal">~60 kcal · 지방7g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">귤 1개</div><div class="meal-amount">중간 크기</div><div class="meal-kcal">~40 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card"><div class="total-row"><span>하루 합계</span><span class="total-kcal">약 2,000 kcal · 단백 ~201g</span></div></div>
+    </div>
+
+    <!-- Cut Day B -->
+    <div id="day-cb" class="day-content">
+      <div class="guide-card">
+        <div class="guide-header bg-meal-b">🍽️ 점심 11~12시 (약 850 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">메인</div><div class="meal-food">닭백숙 (밤+찹쌀)</div><div class="meal-amount">닭 200g (가슴+다리)</div><div class="meal-kcal">~400 kcal · 단52g</div></div>
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">보리밥</div><div class="meal-amount">0.7공기 (140g)</div><div class="meal-kcal">~200 kcal · 탄42g</div></div>
+          <div class="meal-item"><div class="meal-cat">쌈</div><div class="meal-food">양상추·깻잎·호박잎쌈 + 된장</div><div class="meal-amount">넉넉히</div><div class="meal-kcal">~70 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">오이무침 + 파래무침</div><div class="meal-amount">소량씩</div><div class="meal-kcal">~50 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">기름</div><div class="meal-food">참기름</div><div class="meal-amount">0.5큰술</div><div class="meal-kcal">~60 kcal · 지방7g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">딸기 + 체리</div><div class="meal-amount">1주먹</div><div class="meal-kcal">~50 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-s">🥜 간식 2~3시 (약 300 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">삶은계란 2개 + 두유 1잔</div><div class="meal-amount">계란 2 + 두유 200ml</div><div class="meal-kcal">~220 kcal · 단20g</div></div>
+          <div class="meal-item"><div class="meal-cat">견과</div><div class="meal-food">호두 3알 + 잣 1큰술</div><div class="meal-amount">약 15g</div><div class="meal-kcal">~80 kcal · 지방8g</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-c">🌙 저녁 5~6시 (약 850 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">삼치구이 + 새우볶음 + 계란말이(2개)</div><div class="meal-amount">삼치100g+새우100g+계란2</div><div class="meal-kcal">~430 kcal · 단62g</div></div>
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">밤찹쌀밥</div><div class="meal-amount">0.7공기 (140g)</div><div class="meal-kcal">~230 kcal · 탄50g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">참나물 + 미역줄기 + 가지나물</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">청국장찌개</div><div class="meal-amount">1공기</div><div class="meal-kcal">~70 kcal · 단8g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">블루베리</div><div class="meal-amount">한줌</div><div class="meal-kcal">~40 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card"><div class="total-row"><span>하루 합계</span><span class="total-kcal">약 2,000 kcal · 단백 ~202g</span></div></div>
+    </div>
+
+    <!-- Cut Day C -->
+    <div id="day-cc" class="day-content">
+      <div class="guide-card">
+        <div class="guide-header bg-meal-b">🍽️ 점심 11~12시 (약 830 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">메인</div><div class="meal-food">해물찜 (새우+전복+굴)</div><div class="meal-amount">새우100g+전복2개+굴60g</div><div class="meal-kcal">~260 kcal · 단45g</div></div>
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">굴밥</div><div class="meal-amount">0.8공기</div><div class="meal-kcal">~250 kcal · 탄50g</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">늙은호박 된장국</div><div class="meal-amount">1공기</div><div class="meal-kcal">~80 kcal · 단5g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">숙주나물 + 깻잎장아찌 + 부추무침</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~70 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">기름</div><div class="meal-food">참기름</div><div class="meal-amount">0.5큰술</div><div class="meal-kcal">~60 kcal · 지방7g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">블루베리 + 귤</div><div class="meal-amount">1주먹</div><div class="meal-kcal">~50 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-s">🥜 간식 2~3시 (약 350 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">닭가슴살 + 양상추 랩</div><div class="meal-amount">닭가슴살 120g</div><div class="meal-kcal">~200 kcal · 단37g</div></div>
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">삶은계란 1개</div><div class="meal-amount">1개</div><div class="meal-kcal">~70 kcal · 단6g</div></div>
+          <div class="meal-item"><div class="meal-cat">견과</div><div class="meal-food">아몬드 7알</div><div class="meal-amount">약 10g</div><div class="meal-kcal">~70 kcal · 지방6g</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-c">🌙 저녁 5~6시 (약 820 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">전복버터구이 + 가자미구이</div><div class="meal-amount">전복3개 + 가자미1토막</div><div class="meal-kcal">~300 kcal · 단42g</div></div>
+          <div class="meal-item"><div class="meal-cat">전</div><div class="meal-food">부추전 (녹두가루)</div><div class="meal-amount">중간 1장</div><div class="meal-kcal">~180 kcal · 단10g</div></div>
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">찹쌀밥</div><div class="meal-amount">0.5공기 (100g)</div><div class="meal-kcal">~150 kcal · 탄33g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">새송이볶음 + 취나물 + 오이무침</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">파래국</div><div class="meal-amount">1공기</div><div class="meal-kcal">~40 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">사과 반개</div><div class="meal-amount">중간</div><div class="meal-kcal">~50 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card"><div class="total-row"><span>하루 합계</span><span class="total-kcal">약 2,000 kcal · 단백 ~200g</span></div></div>
+    </div>
+  </div>
+
+  <!-- ========== 유지기 ========== -->
+  <div id="phase-maintain" class="phase-content" style="display:none">
+    <div style="text-align:center;padding:8px 0 16px;font-size:13px;color:#00695c;font-weight:600">74kg 유지 · 점심(11~12시) + 간식(2~3시) + 저녁(5~6시) · 2,400kcal</div>
+
+    <div class="day-selector">
+      <button class="day-btn active" onclick="showDay('ma')">A. 생선 위주</button>
+      <button class="day-btn" onclick="showDay('mb')">B. 닭 위주</button>
+      <button class="day-btn" onclick="showDay('mc')">C. 두부·해물</button>
+    </div>
+
+    <!-- Maintain Day A -->
+    <div id="day-ma" class="day-content active">
+      <div class="guide-card">
+        <div class="guide-header bg-meal-b">🍽️ 점심 11~12시 (약 1,000 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">보리+찹쌀밥</div><div class="meal-amount">1공기 (200g)</div><div class="meal-kcal">~300 kcal · 탄66g</div></div>
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">삼치구이 + 계란말이(3개)</div><div class="meal-amount">삼치 150g + 계란 3</div><div class="meal-kcal">~430 kcal · 단58g</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">된장국 (두부·파)</div><div class="meal-amount">1공기</div><div class="meal-kcal">~80 kcal · 단6g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">숙주나물 + 깻잎장아찌 + 미나리무침</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">기름</div><div class="meal-food">참기름</div><div class="meal-amount">0.5큰술</div><div class="meal-kcal">~60 kcal · 지방7g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">사과 반개 + 블루베리</div><div class="meal-amount">1주먹</div><div class="meal-kcal">~70 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-s">🥜 간식 2~3시 (약 400 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">닭가슴살 샐러드 (양상추+브로콜리)</div><div class="meal-amount">닭가슴살 150g</div><div class="meal-kcal">~250 kcal · 단47g</div></div>
+          <div class="meal-item"><div class="meal-cat">견과</div><div class="meal-food">호두 5알 + 아몬드 7알</div><div class="meal-amount">한줌 (약 25g)</div><div class="meal-kcal">~150 kcal · 지방14g</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-c">🌙 저녁 5~6시 (약 1,000 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">서리태찹쌀밥</div><div class="meal-amount">0.8공기 (160g)</div><div class="meal-kcal">~250 kcal · 탄50g</div></div>
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">가자미구이 + 두부구이 + 새우</div><div class="meal-amount">가자미120g+두부반모+새우80g</div><div class="meal-kcal">~420 kcal · 단62g</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">매생이굴국</div><div class="meal-amount">1공기</div><div class="meal-kcal">~70 kcal · 단8g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">가지나물 + 취나물 + 오이무침</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">기름</div><div class="meal-food">올리브유</div><div class="meal-amount">0.5큰술</div><div class="meal-kcal">~60 kcal · 지방7g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">귤 1개 + 딸기</div><div class="meal-amount">중간</div><div class="meal-kcal">~60 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card"><div class="total-row"><span>하루 합계</span><span class="total-kcal">약 2,400 kcal · 단백 ~241g</span></div></div>
+    </div>
+
+    <!-- Maintain Day B -->
+    <div id="day-mb" class="day-content">
+      <div class="guide-card">
+        <div class="guide-header bg-meal-b">🍽️ 점심 11~12시 (약 1,050 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">메인</div><div class="meal-food">닭백숙 (밤+찹쌀)</div><div class="meal-amount">닭 250g (가슴+다리)</div><div class="meal-kcal">~480 kcal · 단62g</div></div>
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">보리밥</div><div class="meal-amount">0.8공기 (160g)</div><div class="meal-kcal">~220 kcal · 탄48g</div></div>
+          <div class="meal-item"><div class="meal-cat">쌈</div><div class="meal-food">양상추·깻잎·호박잎쌈+된장</div><div class="meal-amount">넉넉히</div><div class="meal-kcal">~70 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">오이무침 + 파래무침 + 브로콜리</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">기름</div><div class="meal-food">참기름</div><div class="meal-amount">0.5큰술</div><div class="meal-kcal">~60 kcal · 지방7g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">딸기 + 체리</div><div class="meal-amount">1주먹</div><div class="meal-kcal">~50 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-s">🥜 간식 2~3시 (약 350 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">삶은계란 2개 + 두유 1잔</div><div class="meal-amount">계란 2 + 두유 200ml</div><div class="meal-kcal">~220 kcal · 단20g</div></div>
+          <div class="meal-item"><div class="meal-cat">견과</div><div class="meal-food">호두 5알 + 잣 1큰술</div><div class="meal-amount">약 20g</div><div class="meal-kcal">~130 kcal · 지방12g</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-c">🌙 저녁 5~6시 (약 1,000 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">가자미구이 + 새우볶음 + 계란말이(3개)</div><div class="meal-amount">가자미120g+새우120g+계란3</div><div class="meal-kcal">~500 kcal · 단72g</div></div>
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">밤찹쌀밥</div><div class="meal-amount">0.7공기 (140g)</div><div class="meal-kcal">~230 kcal · 탄50g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">참나물 + 미역줄기 + 가지나물</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">청국장찌개</div><div class="meal-amount">1공기</div><div class="meal-kcal">~70 kcal · 단8g</div></div>
+          <div class="meal-item"><div class="meal-cat">기름</div><div class="meal-food">포도씨기름</div><div class="meal-amount">0.5큰술</div><div class="meal-kcal">~60 kcal · 지방7g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">귤 1개</div><div class="meal-amount">중간</div><div class="meal-kcal">~40 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card"><div class="total-row"><span>하루 합계</span><span class="total-kcal">약 2,400 kcal · 단백 ~242g</span></div></div>
+    </div>
+
+    <!-- Maintain Day C -->
+    <div id="day-mc" class="day-content">
+      <div class="guide-card">
+        <div class="guide-header bg-meal-b">🍽️ 점심 11~12시 (약 1,000 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">메인</div><div class="meal-food">해물찜 (새우+전복+굴)</div><div class="meal-amount">새우150g+전복3개+굴80g</div><div class="meal-kcal">~360 kcal · 단62g</div></div>
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">굴밥</div><div class="meal-amount">1공기</div><div class="meal-kcal">~300 kcal · 탄58g</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">미역국(굴)</div><div class="meal-amount">1공기</div><div class="meal-kcal">~60 kcal · 단5g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">숙주나물 + 깻잎장아찌 + 부추무침</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">전</div><div class="meal-food">녹두전(빈대떡)</div><div class="meal-amount">중간 1장</div><div class="meal-kcal">~180 kcal · 단10g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">블루베리 + 오렌지</div><div class="meal-amount">1주먹</div><div class="meal-kcal">~60 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-s">🥜 간식 2~3시 (약 380 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">닭가슴살 + 양상추 랩</div><div class="meal-amount">닭가슴살 130g</div><div class="meal-kcal">~220 kcal · 단40g</div></div>
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">삶은계란 1개</div><div class="meal-amount">1개</div><div class="meal-kcal">~70 kcal · 단6g</div></div>
+          <div class="meal-item"><div class="meal-cat">견과</div><div class="meal-food">아몬드 7알 + 잣</div><div class="meal-amount">약 15g</div><div class="meal-kcal">~100 kcal · 지방9g</div></div>
+        </div>
+      </div>
+      <div class="guide-card">
+        <div class="guide-header bg-meal-c">🌙 저녁 5~6시 (약 1,020 kcal)</div>
+        <div class="meal-row">
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">전복버터구이 + 삼치구이</div><div class="meal-amount">전복3개 + 삼치 120g</div><div class="meal-kcal">~320 kcal · 단48g</div></div>
+          <div class="meal-item"><div class="meal-cat">단백질</div><div class="meal-food">두부구이</div><div class="meal-amount">두부 반모</div><div class="meal-kcal">~130 kcal · 단14g</div></div>
+          <div class="meal-item"><div class="meal-cat">밥</div><div class="meal-food">찹쌀밥</div><div class="meal-amount">0.7공기 (140g)</div><div class="meal-kcal">~210 kcal · 탄46g</div></div>
+          <div class="meal-item"><div class="meal-cat">반찬</div><div class="meal-food">새송이볶음 + 취나물 + 미나리무침</div><div class="meal-amount">각 소량</div><div class="meal-kcal">~80 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">국</div><div class="meal-food">파래국</div><div class="meal-amount">1공기</div><div class="meal-kcal">~50 kcal</div></div>
+          <div class="meal-item"><div class="meal-cat">기름</div><div class="meal-food">버터+참기름</div><div class="meal-amount">각 0.3큰술</div><div class="meal-kcal">~70 kcal · 지방8g</div></div>
+          <div class="meal-item"><div class="meal-cat">과일</div><div class="meal-food">귤 1개 + 사과</div><div class="meal-amount">소량</div><div class="meal-kcal">~60 kcal</div></div>
+        </div>
+      </div>
+      <div class="guide-card"><div class="total-row"><span>하루 합계</span><span class="total-kcal">약 2,400 kcal · 단백 ~245g</span></div></div>
+    </div>
+  </div>
+
+  <!-- 가이드 팁 -->
+  <div class="tip-box">
+    <h3>실천 가이드 — 2끼 + 간식 (16:8 간헐적 단식)</h3>
+    <div class="tip-item"><strong>식사 창:</strong> 11시~18시 (약 7시간). 공복 17시간 유지 → 체지방 연소·염증 감소 효과</div>
+    <div class="tip-item"><strong>점심(첫 끼)이 가장 중요:</strong> 밥 0.7~1공기 + 단백질 풍성하게. 하루 활동 에너지의 주 공급원</div>
+    <div class="tip-item"><strong>간식은 단백질 보충 타임:</strong> 닭가슴살 샐러드, 삶은계란, 두유 + 견과류. 두 끼 사이 단백질 간극을 메움</div>
+    <div class="tip-item"><strong>저녁은 단백질 위주:</strong> 밥량 0.5~0.7공기로 줄이고, 생선·두부·계란 조합으로 단백질 집중</div>
+    <div class="tip-item"><strong>매끼 단백질 80~100g:</strong> 2끼로 200g+ 달성. 두부·생선·닭·계란·새우 조합 활용</div>
+    <div class="tip-item"><strong>공복 시 수분:</strong> 아침 공복에 물 500ml+ 섭취 (내림프수종 관리에도 중요). 커피도 OK</div>
+    <div class="tip-item"><strong>채소 넉넉히:</strong> 반찬 3종 이상으로 식이섬유 확보 — 포만감 유지 + 장건강</div>
+    <div class="tip-item"><strong>감량 속도:</strong> 월 1~1.5kg. 주 1회 아침 공복 체중 기록 → 4주 평균으로 추이 확인</div>
+    <div class="tip-item" style="color:#e65100"><strong>74kg 도달 후:</strong> 유지기로 전환 → 2,400kcal. 간식량 늘리고 저녁 밥량 약간 증가</div>
+  </div>
+
+</div>
+
+<!-- ==================== 주간플래너 ==================== -->
+<div id="tab-planner" class="tab-content">
+  <div class="pw-week-bar">
+    <div>
+      <div class="pw-week-label" id="pwWeekLabel"></div>
+      <div class="pw-week-date" id="pwWeekDate"></div>
+    </div>
+    <button class="pw-btn pw-btn-gen" onclick="pwGenerate()">🔄 새 식단</button>
+    <button class="pw-btn pw-btn-shop" onclick="pwOpenShop()">🛒 장보기</button>
+  </div>
+  <div class="pw-info-note">매주 월요일 자동으로 새 식단이 생성됩니다 · <strong>새 식단</strong> 버튼으로 수동 갱신도 가능 · 식재료 클릭 시 조리법 확인</div>
+  <div class="pw-tab-row" id="pwTabRow"></div>
+  <div id="pwDayPanels"></div>
+
+  <!-- Recipe Modal -->
+  <div class="pw-modal-overlay" id="pwRecipeModal" onclick="if(event.target===this)pwCloseRecipe()">
+    <div class="pw-modal" id="pwRecipeContent"></div>
+  </div>
+
+  <!-- Shopping List Modal -->
+  <div class="pw-shop-overlay" id="pwShopModal" onclick="if(event.target===this)pwCloseShop()">
+    <div class="pw-shop-modal" id="pwShopContent"></div>
+  </div>
+</div>
+
+<script>
+function showTab(n){
+  document.querySelectorAll('.tab-content').forEach(function(e){e.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(e){e.classList.remove('active')});
+  document.getElementById('tab-'+n).classList.add('active');
+  document.querySelector('.tab-'+n).classList.add('active');
+  window.scrollTo(0,document.querySelector('.tab-container').offsetTop-10);
+}
+function showPhase(p){
+  document.querySelectorAll('.phase-content').forEach(function(e){e.style.display='none'});
+  document.getElementById('phase-'+p).style.display='block';
+  // Reset day buttons inside new phase
+  var phase=document.getElementById('phase-'+p);
+  phase.querySelectorAll('.day-content').forEach(function(e,i){e.classList.toggle('active',i===0)});
+  phase.querySelectorAll('.day-selector .day-btn').forEach(function(e,i){e.classList.toggle('active',i===0)});
+  // Update phase selector
+  var btns=event.target.parentElement.querySelectorAll('.day-btn');
+  btns.forEach(function(b){b.classList.remove('active')});
+  event.target.classList.add('active');
+}
+function showDay(d){
+  var target=document.getElementById('day-'+d);
+  if(!target)return;
+  var parent=target.parentElement;
+  parent.querySelectorAll('.day-content').forEach(function(e){e.classList.remove('active')});
+  target.classList.add('active');
+  // Find the matching day-selector within this phase/scope
+  var daySelectors=parent.querySelectorAll('.day-selector');
+  if(daySelectors.length>0){
+    var lastSel=daySelectors[daySelectors.length-1];
+    lastSel.querySelectorAll('.day-btn').forEach(function(b){b.classList.remove('active')});
+  }
+  event.target.classList.add('active');
+}
+document.querySelectorAll('.tab-btn').forEach(function(btn){
+  btn.addEventListener('touchend',function(e){e.preventDefault();this.click()},{passive:false});
+});
+document.querySelectorAll('.day-btn').forEach(function(btn){
+  btn.addEventListener('touchend',function(e){e.preventDefault();this.click()},{passive:false});
+});
+
+// ===== WEEKLY PLANNER =====
+(function(){
+// ===== RECIPE DATABASE =====
+const R = {
+  bori_bap: {name:'보리+찹쌀밥',emoji:'🍚',time:'30분',sv:'1공기 (200g)',kcal:300,c:66,p:7,f:1,cat:'rice',
+    ing:[{n:'보리',a:'50g',c:'①'},{n:'찹쌀',a:'40g',c:"⑥'"},{n:'물',a:'적당량',c:''}],
+    steps:['보리를 2시간 이상 불린다','찹쌀과 섞어 밥솥에 넣는다','물을 보리+찹쌀 기준 1.2배 넣고 취사']},
+  bam_bap: {name:'밤찹쌀밥',emoji:'🌰',time:'35분',sv:'1공기 (210g)',kcal:320,c:68,p:6,f:2,cat:'rice',
+    ing:[{n:'찹쌀',a:'80g',c:"⑥'"},{n:'밤',a:'5개',c:'⑥'}],
+    steps:['밤 껍질을 벗겨 반으로 자른다','찹쌀을 30분 불린 후 밤과 함께 밥솥에','물 1.1배, 취사 후 10분 뜸']},
+  gul_bap: {name:'굴밥',emoji:'🦪',time:'35분',sv:'1공기 (220g)',kcal:310,c:58,p:14,f:4,cat:'rice',
+    ing:[{n:'찹쌀',a:'80g',c:"⑥'"},{n:'굴',a:'80g',c:'⑥'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'참기름',a:'약간',c:'①'}],
+    steps:['찹쌀 30분 불리고 밥솥에 넣는다','굴은 소금물에 살살 씻어 물기 뺀다','밥 거의 다 되면 굴 올려 5분 뜸','간장+참기름 양념장 곁들여']},
+  seoritae_bap: {name:'서리태찹쌀밥',emoji:'🫘',time:'35분',sv:'1공기 (200g)',kcal:300,c:60,p:10,f:3,cat:'rice',
+    ing:[{n:'찹쌀',a:'70g',c:"⑥'"},{n:'서리태',a:'30g',c:'①'}],
+    steps:['서리태를 4시간 이상 불린다','찹쌀과 섞어 밥솥에 넣고 물 1.2배','취사 후 골고루 섞어준다']},
+  doenjang_guk: {name:'된장국 (두부·파)',emoji:'🥣',time:'15분',sv:'1대접 (250ml)',kcal:80,c:6,p:6,f:3,cat:'soup',
+    ing:[{n:'된장',a:'1큰술',c:"⑥'"},{n:'두부',a:'1/4모',c:'⑥'},{n:'파',a:'1대',c:'⑥'},{n:'다시마',a:'1조각',c:'⑥'}],
+    steps:['다시마로 육수를 낸다 (5분 끓여 건짐)','된장을 풀고 두부를 깍둑 썰어 넣는다','파 송송 썰어 넣고 2분 더 끓인다']},
+  cheonggukjang: {name:'청국장찌개',emoji:'🫕',time:'20분',sv:'1대접 (250ml)',kcal:90,c:8,p:8,f:3,cat:'soup',
+    ing:[{n:'청국장',a:'2큰술',c:"⑥'"},{n:'두부',a:'1/4모',c:'⑥'},{n:'늙은호박',a:'50g',c:'⑥'},{n:'파',a:'1대',c:'⑥'}],
+    steps:['다시마 육수를 끓인다','청국장을 풀고 호박, 두부를 넣는다','끓어오르면 파 넣고 1분 더']},
+  miyeok_guk: {name:'미역국 (굴)',emoji:'🥬',time:'20분',sv:'1대접 (250ml)',kcal:70,c:4,p:8,f:3,cat:'soup',
+    ing:[{n:'미역',a:'10g(건)',c:'⑥'},{n:'굴',a:'50g',c:'⑥'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'참기름',a:'약간',c:'①'}],
+    steps:['미역 불려 참기름에 볶는다 (2분)','물 600ml 붓고 끓인다','굴 넣고 간장으로 간, 5분 더 끓인다']},
+  maesaengi_guk: {name:'매생이굴국',emoji:'🌊',time:'10분',sv:'1대접 (250ml)',kcal:60,c:3,p:8,f:2,cat:'soup',
+    ing:[{n:'매생이',a:'한줌',c:"⑥'"},{n:'굴',a:'60g',c:'⑥'},{n:'죽염',a:'약간',c:'⑥'}],
+    steps:['물을 끓이고 매생이를 풀어 넣는다','굴을 넣고 1~2분 끓인다 (오래 끓이면 X)','죽염으로 간']},
+  gyeran_guk: {name:'계란국',emoji:'🥚',time:'10분',sv:'1대접 (250ml)',kcal:70,c:2,p:7,f:4,cat:'soup',
+    ing:[{n:'계란',a:'1개',c:'①'},{n:'파',a:'1대',c:'⑥'},{n:'김',a:'약간',c:'⑥'},{n:'간장',a:'약간',c:"⑥'"}],
+    steps:['다시마 육수에 간장 넣고 끓인다','계란 풀어서 천천히 부어 젓는다','파, 김 올려 마무리']},
+  parae_guk: {name:'파래국',emoji:'🟢',time:'10분',sv:'1대접 (250ml)',kcal:45,c:3,p:4,f:2,cat:'soup',
+    ing:[{n:'파래',a:'한줌',c:'⑥'},{n:'된장',a:'1작은술',c:"⑥'"}],
+    steps:['파래를 깨끗이 씻어 물기 뺀다','물 끓여 된장 풀고 파래 넣는다','1분만 끓인다 (오래 끓이면 물러짐)']},
+  hobak_guk: {name:'늙은호박 된장국',emoji:'🎃',time:'15분',sv:'1대접 (250ml)',kcal:75,c:8,p:5,f:3,cat:'soup',
+    ing:[{n:'늙은호박',a:'100g',c:'⑥'},{n:'된장',a:'1큰술',c:"⑥'"},{n:'두부',a:'1/4모',c:'⑥'},{n:'파',a:'1대',c:'⑥'}],
+    steps:['늙은호박 반달 모양으로 썬다','물 끓여 된장 풀고 호박 넣어 5분','두부, 파 넣고 3분 더 끓인다']},
+  samchi_gui: {name:'삼치구이',emoji:'🐟',time:'15분',sv:'1토막 (120g)',kcal:210,c:0,p:30,f:9,cat:'main',
+    ing:[{n:'삼치',a:'1토막 (120g)',c:'⑥'},{n:'죽염',a:'약간',c:'⑥'},{n:'올리브유',a:'약간',c:'①'}],
+    steps:['삼치에 죽염 뿌려 10분 재운다','팬에 올리브유 두르고 중불','앞뒤 각 5분씩 노릇하게 굽는다']},
+  gajami_gui: {name:'가자미구이',emoji:'🐠',time:'15분',sv:'1마리 (120g)',kcal:160,c:0,p:28,f:5,cat:'main',
+    ing:[{n:'가자미',a:'1마리 (120g)',c:"⑥'"},{n:'죽염',a:'약간',c:'⑥'}],
+    steps:['가자미에 죽염 뿌려 10분 둔다','그릴 또는 팬에서 중불로 앞뒤 5분씩','바삭하게 구워 접시에 담는다']},
+  gulbi_gui: {name:'굴비구이',emoji:'🐡',time:'15분',sv:'1마리 (100g)',kcal:180,c:0,p:26,f:8,cat:'main',
+    ing:[{n:'굴비',a:'1마리',c:"⑥'"}],
+    steps:['굴비 비늘 정리하고 깨끗이 씻는다','그릴에 중불로 앞뒤 각 5~6분','짭짤하니 별도 간 불필요']},
+  jeonbok_gui: {name:'전복버터구이',emoji:'🐚',time:'10분',sv:'3개 (150g)',kcal:130,c:3,p:20,f:5,cat:'main',
+    ing:[{n:'전복',a:'3개',c:"⑥'"},{n:'버터',a:'1/2큰술',c:"⑥'"},{n:'간장',a:'약간',c:"⑥'"}],
+    steps:['전복 솔로 문질러 씻고 내장 분리','팬에 버터 녹여 전복 올린다','간장 한 바퀴 두르고 앞뒤 2분씩']},
+  dak_gasmsal: {name:'닭가슴살 구이',emoji:'🍗',time:'15분',sv:'1덩이 (100g)',kcal:165,c:0,p:31,f:4,cat:'main',
+    ing:[{n:'닭가슴살',a:'100g',c:'①'},{n:'올리브유',a:'약간',c:'①'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'참깨',a:'약간',c:'①'}],
+    steps:['닭가슴살을 간장에 15분 재운다','팬에 올리브유 두르고 중불','앞뒤 각 5분씩 굽고 참깨 뿌린다']},
+  dak_baeksuk: {name:'닭백숙',emoji:'🍲',time:'50분',sv:'1인분 (닭200g+국물)',kcal:400,c:20,p:52,f:12,cat:'main',
+    ing:[{n:'닭',a:'200g (다리+가슴)',c:'①'},{n:'밤',a:'3개',c:'⑥'},{n:'찹쌀',a:'30g',c:"⑥'"},{n:'파',a:'2대',c:'⑥'}],
+    steps:['닭을 찬물에 넣고 끓인다 (거품 제거)','밤, 불린 찹쌀, 파 넣는다','중불에서 40분 푹 끓인다','죽염으로 간하고 깻잎과 함께']},
+  saeu_bokkeum: {name:'새우볶음',emoji:'🦐',time:'10분',sv:'1접시 (120g)',kcal:120,c:3,p:22,f:3,cat:'main',
+    ing:[{n:'새우',a:'120g (껍질벗긴것)',c:'⑥'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'올리브유',a:'약간',c:'①'},{n:'파',a:'약간',c:'⑥'}],
+    steps:['새우 내장 제거하고 씻는다','팬에 올리브유+파 볶다가 새우 투입','간장 넣고 센 불에서 2분 볶는다']},
+  dubu_gui: {name:'두부구이',emoji:'🧈',time:'10분',sv:'반모 (150g)',kcal:130,c:4,p:14,f:7,cat:'main',
+    ing:[{n:'두부',a:'반모 (150g)',c:'⑥'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'참기름',a:'약간',c:'①'},{n:'파',a:'약간',c:'⑥'}],
+    steps:['두부를 1.5cm 두께로 썬다','키친타월로 물기 제거','팬에 참기름 두르고 앞뒤 노릇하게','간장+파 양념장 곁들인다']},
+  gyeran_mari: {name:'계란말이',emoji:'🍳',time:'10분',sv:'계란 2개분 (1줄)',kcal:140,c:1,p:12,f:10,cat:'main',
+    ing:[{n:'계란',a:'2개',c:'①'},{n:'파',a:'약간',c:'⑥'},{n:'죽염',a:'약간',c:'⑥'}],
+    steps:['계란 풀어 파 송송, 죽염 넣어 섞는다','팬에 올리브유 얇게 두르고 약불','계란물 1/3씩 부어 말아가며 익힌다']},
+  gyeran3_mari: {name:'계란말이 (3개)',emoji:'🍳',time:'10분',sv:'계란 3개분 (1줄)',kcal:210,c:1,p:18,f:15,cat:'main',
+    ing:[{n:'계란',a:'3개',c:'①'},{n:'파',a:'약간',c:'⑥'},{n:'죽염',a:'약간',c:'⑥'}],
+    steps:['계란 3개 풀어 파, 죽염 넣어 섞는다','팬에 올리브유 얇게, 약불','1/3씩 부어 말아가며 두툼하게']},
+  haemul_jjim: {name:'해물찜',emoji:'🦞',time:'25분',sv:'1인분 (300g)',kcal:280,c:6,p:48,f:7,cat:'main',
+    ing:[{n:'새우',a:'100g',c:'⑥'},{n:'전복',a:'2개',c:"⑥'"},{n:'굴',a:'60g',c:'⑥'},{n:'간장',a:'2큰술',c:"⑥'"},{n:'파',a:'1대',c:'⑥'}],
+    steps:['새우 내장 제거, 전복 손질, 굴 씻기','냄비에 간장+물 3큰술 끓인다','해물 넣고 뚜껑 덮어 중불 8분','파 올려 마무리']},
+  samchi_jorim: {name:'삼치조림',emoji:'🐟',time:'20분',sv:'1토막 (100g)',kcal:200,c:5,p:28,f:8,cat:'main',
+    ing:[{n:'삼치',a:'1토막 (100g)',c:'⑥'},{n:'간장',a:'2큰술',c:"⑥'"},{n:'파',a:'1대',c:'⑥'},{n:'흑설탕',a:'약간',c:"⑥'"}],
+    steps:['삼치를 큼직하게 자른다','간장+흑설탕+물 3큰술 양념장 만들기','냄비에 양념장 끓이고 삼치 넣어 중불 10분','파 넣고 양념 끼얹어가며 3분 더']},
+  buchu_jeon: {name:'부추전 (녹두가루)',emoji:'🥞',time:'15분',sv:'1장 (지름 20cm)',kcal:180,c:18,p:10,f:8,cat:'main',
+    ing:[{n:'부추',a:'한줌',c:'①'},{n:'녹두가루',a:'4큰술',c:'①'},{n:'계란',a:'1개',c:'①'},{n:'물',a:'3큰술',c:''},{n:'올리브유',a:'약간',c:'①'}],
+    steps:['녹두가루+물+계란 반죽을 만든다','부추 3cm 길이로 잘라 섞는다','팬에 올리브유 두르고 얇게 펴 중불','앞뒤 각 3분씩 바삭하게']},
+  nokdu_jeon: {name:'녹두전 (빈대떡)',emoji:'🥞',time:'25분',sv:'1장 (지름 18cm)',kcal:200,c:20,p:12,f:9,cat:'main',
+    ing:[{n:'녹두',a:'1/2컵(불린것)',c:'①'},{n:'숙주',a:'한줌',c:'①'},{n:'파',a:'약간',c:'⑥'},{n:'올리브유',a:'약간',c:'①'}],
+    steps:['녹두 4시간 불려 믹서에 간다','숙주 데쳐서 섞고 파도 넣는다','팬에 기름 두르고 한 국자씩 펴서','중불에서 앞뒤 5분씩 노릇하게']},
+  sukju: {name:'숙주나물',emoji:'🌱',time:'5분',sv:'1접시 (70g)',kcal:25,c:3,p:2,f:1,cat:'side',
+    ing:[{n:'숙주',a:'한줌',c:'①'},{n:'참기름',a:'약간',c:'①'},{n:'간장',a:'약간',c:"⑥'"}],
+    steps:['숙주를 끓는 물에 30초 데친다','찬물에 헹궈 물기 짠다','참기름+간장으로 무친다']},
+  broccoli: {name:'브로콜리무침',emoji:'🥦',time:'5분',sv:'1접시 (80g)',kcal:30,c:4,p:3,f:1,cat:'side',
+    ing:[{n:'브로콜리',a:'한줌',c:'①'},{n:'참기름',a:'약간',c:'①'},{n:'간장',a:'약간',c:"⑥'"}],
+    steps:['브로콜리 한입 크기로 자른다','끓는 물에 1분 데친다','참기름+간장으로 무친다']},
+  gaji: {name:'가지나물',emoji:'🍆',time:'10분',sv:'1접시 (80g)',kcal:25,c:4,p:1,f:1,cat:'side',
+    ing:[{n:'가지',a:'1개',c:'⑥'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'참기름',a:'약간',c:'①'}],
+    steps:['가지를 반으로 갈라 찜기에 7분 찐다','식혀서 손으로 찢는다','간장+참기름으로 무친다']},
+  chwi: {name:'취나물무침',emoji:'🌿',time:'10분',sv:'1접시 (60g)',kcal:25,c:3,p:2,f:1,cat:'side',
+    ing:[{n:'취나물',a:'한줌',c:'①'},{n:'된장',a:'약간',c:"⑥'"},{n:'참기름',a:'약간',c:'①'}],
+    steps:['취나물을 끓는 물에 1분 데친다','찬물 헹궈 물기 꽉 짠다','된장+참기름으로 조물조물 무친다']},
+  oi: {name:'오이무침',emoji:'🥒',time:'5분',sv:'반개 (100g)',kcal:20,c:3,p:1,f:0,cat:'side',
+    ing:[{n:'오이',a:'1/2개',c:'⑥'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'식초',a:'약간',c:'⑥'}],
+    steps:['오이를 얇게 어슷 썬다','간장+식초+참깨로 양념','살살 버무린다']},
+  minari: {name:'미나리무침',emoji:'🥬',time:'5분',sv:'1접시 (60g)',kcal:20,c:2,p:1,f:1,cat:'side',
+    ing:[{n:'미나리',a:'한줌',c:'⑥'},{n:'간장',a:'약간',c:"⑥'"},{n:'식초',a:'약간',c:'⑥'}],
+    steps:['미나리를 끓는 물에 30초 데친다','3~4cm 길이로 자른다','간장+식초+참기름으로 무친다']},
+  kkaennip: {name:'깻잎장아찌',emoji:'🍃',time:'10분',sv:'5~6장',kcal:25,c:2,p:1,f:1,cat:'side',
+    ing:[{n:'깻잎',a:'10장',c:'①'},{n:'간장',a:'3큰술',c:"⑥'"},{n:'식초',a:'1큰술',c:'⑥'}],
+    steps:['깻잎 깨끗이 씻어 물기 뺀다','간장+식초+참깨 양념장 만들기','깻잎 한 장씩 양념 발라 쌓는다','냉장고에 하루 숙성']},
+  saesong: {name:'새송이볶음',emoji:'🍄',time:'10분',sv:'1개 (80g)',kcal:30,c:4,p:2,f:1,cat:'side',
+    ing:[{n:'새송이',a:'1개',c:'①'},{n:'버터',a:'약간',c:"⑥'"},{n:'간장',a:'약간',c:"⑥'"}],
+    steps:['새송이를 0.5cm 두께로 썬다','팬에 버터 녹여 새송이 올린다','중불에서 양면 노릇, 간장 한 바퀴']},
+  miyeok_julgi: {name:'미역줄기볶음',emoji:'🟤',time:'10분',sv:'1접시 (80g)',kcal:25,c:3,p:1,f:1,cat:'side',
+    ing:[{n:'미역줄기',a:'100g',c:'⑥'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'참기름',a:'약간',c:'①'}],
+    steps:['미역줄기 3cm로 자른다','팬에 참기름 두르고 볶는다','간장 넣고 중불에서 5분 볶는다']},
+  buchu_muchim: {name:'부추무침',emoji:'🌱',time:'5분',sv:'1접시 (60g)',kcal:20,c:2,p:1,f:1,cat:'side',
+    ing:[{n:'부추',a:'한줌',c:'①'},{n:'간장',a:'1큰술',c:"⑥'"},{n:'식초',a:'약간',c:'⑥'}],
+    steps:['부추를 4cm 길이로 자른다','간장+식초+참깨 양념','살살 버무린다']},
+  chamnamul: {name:'참나물무침',emoji:'🥬',time:'5분',sv:'1접시 (60g)',kcal:20,c:2,p:1,f:1,cat:'side',
+    ing:[{n:'참나물',a:'한줌',c:"⑥'"},{n:'간장',a:'약간',c:"⑥'"},{n:'참기름',a:'약간',c:'①'}],
+    steps:['참나물을 깨끗이 씻는다','끓는 물에 30초 데쳐 찬물 헹굼','간장+참기름으로 무친다']},
+  parae: {name:'파래무침',emoji:'🟩',time:'5분',sv:'1접시 (50g)',kcal:20,c:2,p:1,f:1,cat:'side',
+    ing:[{n:'파래',a:'한줌',c:'⑥'},{n:'식초',a:'1큰술',c:'⑥'},{n:'참기름',a:'약간',c:'①'}],
+    steps:['파래를 깨끗이 여러 번 씻는다','물기 빼고 그릇에 담는다','식초+참기름+참깨로 무친다']},
+  dak_salad: {name:'닭가슴살 샐러드',emoji:'🥗',time:'10분',sv:'1볼 (250g)',kcal:200,c:3,p:37,f:5,cat:'snack',
+    ing:[{n:'닭가슴살',a:'120g',c:'①'},{n:'양상추',a:'한줌',c:"⑥'"},{n:'브로콜리',a:'약간',c:'①'},{n:'올리브유',a:'약간',c:'①'}],
+    steps:['닭가슴살을 삶거나 에어프라이어 15분','양상추·브로콜리 씻어 그릇에 깔기','닭가슴살 찢어 올리고 올리브유+간장 드레싱']},
+  gyeran_bap: {name:'삶은계란',emoji:'🥚',time:'10분',sv:'1개 (50g)',kcal:70,c:0,p:6,f:5,cat:'snack',
+    ing:[{n:'계란',a:'1개',c:'①'}],
+    steps:['물 끓이고 계란 넣는다','8분 삶아 찬물에 식힌다','껍질 벗겨 죽염 곁들인다']},
+  gyeran2: {name:'삶은계란 2개',emoji:'🥚',time:'10분',sv:'2개 (100g)',kcal:140,c:0,p:12,f:10,cat:'snack',
+    ing:[{n:'계란',a:'2개',c:'①'}],
+    steps:['물 끓이고 계란 넣는다','8분 삶아 찬물에 식힌다']},
+  duyu: {name:'두유',emoji:'🥛',time:'0분',sv:'1팩 (200ml)',kcal:80,c:6,p:7,f:3,cat:'snack',
+    ing:[{n:'두유',a:'200ml',c:'⑥'}],
+    steps:['무가당 두유 200ml 준비','상온 또는 살짝 데워서']},
+  hodu_amo: {name:'호두+아몬드',emoji:'🥜',time:'0분',sv:'한줌 (25g)',kcal:130,c:4,p:4,f:12,cat:'snack',
+    ing:[{n:'호두',a:'5알',c:'①'},{n:'아몬드',a:'5알',c:'①'}],
+    steps:['호두 5알 + 아몬드 5알 한줌','그대로 또는 살짝 로스팅']},
+  jat_amo: {name:'잣+아몬드',emoji:'🌰',time:'0분',sv:'한줌 (20g)',kcal:100,c:3,p:3,f:9,cat:'snack',
+    ing:[{n:'잣',a:'1큰술',c:'①'},{n:'아몬드',a:'7알',c:'①'}],
+    steps:['잣 1큰술 + 아몬드 7알','그대로 간식으로']},
+  hodu_jat: {name:'호두+잣',emoji:'🥜',time:'0분',sv:'한줌 (20g)',kcal:110,c:3,p:3,f:10,cat:'snack',
+    ing:[{n:'호두',a:'3알',c:'①'},{n:'잣',a:'1큰술',c:'①'}],
+    steps:['호두 3알 + 잣 1큰술','그대로 간식으로']},
+  maesil_cha: {name:'매실차',emoji:'🍵',time:'3분',sv:'1잔 (200ml)',kcal:30,c:7,p:0,f:0,cat:'snack',
+    ing:[{n:'매실청',a:'1큰술',c:"⑥'"},{n:'물',a:'200ml',c:''}],
+    steps:['매실청 1큰술을 컵에 넣는다','따뜻한 물을 부어 저어준다']},
+  sagwa: {name:'사과 반개',emoji:'🍎',time:'0분',sv:'반개 (100g)',kcal:50,c:13,p:0,f:0,cat:'fruit',
+    ing:[{n:'사과',a:'반개',c:'①'}],steps:['깨끗이 씻어 먹기 좋게 자른다']},
+  blueberry: {name:'블루베리',emoji:'🫐',time:'0분',sv:'한줌 (70g)',kcal:40,c:10,p:0,f:0,cat:'fruit',
+    ing:[{n:'블루베리',a:'한줌',c:'①'}],steps:['씻어서 그대로']},
+  gyul: {name:'귤',emoji:'🍊',time:'0분',sv:'1개 (80g)',kcal:35,c:9,p:0,f:0,cat:'fruit',
+    ing:[{n:'귤',a:'1개',c:'①'}],steps:['껍질 벗겨 먹는다']},
+  dalgi: {name:'딸기',emoji:'🍓',time:'0분',sv:'5~6개 (100g)',kcal:40,c:10,p:0,f:0,cat:'fruit',
+    ing:[{n:'딸기',a:'5~6개',c:'①'}],steps:['깨끗이 씻어 먹는다']},
+};
+
+const TEMPLATES = [
+  {lunch:{rice:'bori_bap',mains:['samchi_gui','gyeran_mari'],soup:'doenjang_guk',sides:['sukju','kkaennip','broccoli'],fruit:'sagwa'},
+   snack:{items:['dak_salad','hodu_amo','maesil_cha']},
+   dinner:{rice:'seoritae_bap',mains:['gajami_gui','dubu_gui'],soup:'maesaengi_guk',sides:['gaji','chwi','minari'],fruit:'gyul'}},
+  {lunch:{rice:'bori_bap',mains:['dak_baeksuk'],soup:null,sides:['oi','parae','broccoli'],fruit:'dalgi'},
+   snack:{items:['gyeran2','duyu','hodu_jat']},
+   dinner:{rice:'bam_bap',mains:['samchi_jorim','saeu_bokkeum'],soup:'cheonggukjang',sides:['chamnamul','miyeok_julgi','gaji'],fruit:'gyul'}},
+  {lunch:{rice:'gul_bap',mains:['haemul_jjim'],soup:'hobak_guk',sides:['sukju','kkaennip','buchu_muchim'],fruit:'blueberry'},
+   snack:{items:['dak_salad','gyeran_bap','jat_amo']},
+   dinner:{rice:'bori_bap',mains:['jeonbok_gui','gajami_gui'],soup:'parae_guk',sides:['saesong','chwi','oi'],fruit:'sagwa'}},
+  {lunch:{rice:'seoritae_bap',mains:['nokdu_jeon','gyeran3_mari'],soup:'miyeok_guk',sides:['minari','broccoli'],fruit:'dalgi'},
+   snack:{items:['gyeran2','duyu','hodu_amo']},
+   dinner:{rice:'bam_bap',mains:['samchi_gui','dubu_gui'],soup:'gyeran_guk',sides:['gaji','buchu_muchim','parae'],fruit:'blueberry'}},
+  {lunch:{rice:'bori_bap',mains:['jeonbok_gui','samchi_gui','gyeran_mari'],soup:'doenjang_guk',sides:['sukju','kkaennip'],fruit:'sagwa'},
+   snack:{items:['dak_salad','jat_amo','maesil_cha']},
+   dinner:{rice:'gul_bap',mains:['saeu_bokkeum','dubu_gui'],soup:'maesaengi_guk',sides:['chwi','miyeok_julgi','oi'],fruit:'gyul'}},
+  {lunch:{rice:'bam_bap',mains:['dak_gasmsal','buchu_jeon'],soup:'cheonggukjang',sides:['broccoli','minari','kkaennip'],fruit:'blueberry'},
+   snack:{items:['gyeran2','duyu','hodu_jat']},
+   dinner:{rice:'seoritae_bap',mains:['gulbi_gui','saeu_bokkeum'],soup:'hobak_guk',sides:['saesong','chamnamul','gaji'],fruit:'dalgi'}},
+  {lunch:{rice:'gul_bap',mains:['haemul_jjim','gyeran_mari'],soup:'doenjang_guk',sides:['oi','parae'],fruit:'gyul'},
+   snack:{items:['dak_salad','hodu_amo','maesil_cha']},
+   dinner:{rice:'bori_bap',mains:['gulbi_gui','dubu_gui'],soup:'miyeok_guk',sides:['sukju','chwi','buchu_muchim'],fruit:'sagwa'}},
+  {lunch:{rice:'bori_bap',mains:['dak_baeksuk'],soup:null,sides:['broccoli','kkaennip','minari'],fruit:'sagwa'},
+   snack:{items:['gyeran2','duyu','jat_amo']},
+   dinner:{rice:'bam_bap',mains:['jeonbok_gui','samchi_jorim'],soup:'parae_guk',sides:['gaji','saesong','oi'],fruit:'dalgi'}},
+  {lunch:{rice:'seoritae_bap',mains:['samchi_gui','saeu_bokkeum'],soup:'miyeok_guk',sides:['sukju','chamnamul'],fruit:'blueberry'},
+   snack:{items:['dak_salad','hodu_jat','maesil_cha']},
+   dinner:{rice:'gul_bap',mains:['dak_gasmsal','dubu_gui'],soup:'cheonggukjang',sides:['miyeok_julgi','buchu_muchim','oi'],fruit:'gyul'}},
+  {lunch:{rice:'bam_bap',mains:['gajami_gui','nokdu_jeon'],soup:'hobak_guk',sides:['broccoli','kkaennip'],fruit:'dalgi'},
+   snack:{items:['gyeran2','duyu','hodu_amo']},
+   dinner:{rice:'bori_bap',mains:['samchi_jorim','gyeran3_mari'],soup:'gyeran_guk',sides:['chwi','parae','minari'],fruit:'sagwa'}},
+];
+
+let pwCurrentWeek = pwGetWeekNum();
+let pwWeekPlan = [];
+
+function pwGetWeekNum(){
+  const d=new Date(),y=new Date(d.getFullYear(),0,1);
+  return Math.ceil(((d-y)/864e5+y.getDay()+1)/7);
+}
+function pwGetMonday(){
+  const d=new Date(),day=d.getDay(),diff=d.getDate()-day+(day===0?-6:1);
+  return new Date(d.setDate(diff));
+}
+function pwSeed(w){let s=w*2654435761&0xFFFFFFFF;return function(){s^=s<<13;s^=s>>17;s^=s<<5;return(s>>>0)/4294967296}}
+
+function pwGenerate(){
+  pwCurrentWeek = pwGetWeekNum();
+  const rng = pwSeed(pwCurrentWeek + new Date().getTime());
+  pwBuildPlan(rng);
+  pwRenderAll();
+}
+function pwGenerateFromWeek(){
+  const rng = pwSeed(pwCurrentWeek);
+  pwBuildPlan(rng);
+  pwRenderAll();
+}
+
+function pwBuildPlan(rng){
+  pwWeekPlan=[];
+  const used=new Set();
+  for(let d=0;d<7;d++){
+    let idx,attempts=0;
+    do{idx=Math.floor(rng()*TEMPLATES.length);attempts++}while(used.has(idx)&&attempts<20);
+    if(used.size>=TEMPLATES.length)used.clear();
+    used.add(idx);
+    pwWeekPlan.push(JSON.parse(JSON.stringify(TEMPLATES[idx])));
+  }
+}
+
+function pwCalcMeal(keys){
+  let kcal=0,c=0,p=0,f=0;
+  keys.forEach(k=>{if(R[k]){kcal+=R[k].kcal;c+=R[k].c;p+=R[k].p;f+=R[k].f}});
+  return{kcal,c,p,f};
+}
+function pwDayKeys(plan){
+  const k=[];
+  if(plan.lunch.rice)k.push(plan.lunch.rice);
+  plan.lunch.mains.forEach(m=>k.push(m));
+  if(plan.lunch.soup)k.push(plan.lunch.soup);
+  plan.lunch.sides.forEach(s=>k.push(s));
+  if(plan.lunch.fruit)k.push(plan.lunch.fruit);
+  plan.snack.items.forEach(i=>k.push(i));
+  if(plan.dinner.rice)k.push(plan.dinner.rice);
+  plan.dinner.mains.forEach(m=>k.push(m));
+  if(plan.dinner.soup)k.push(plan.dinner.soup);
+  plan.dinner.sides.forEach(s=>k.push(s));
+  if(plan.dinner.fruit)k.push(plan.dinner.fruit);
+  return k;
+}
+
+const PW_DAYS=['월','화','수','목','금','토','일'];
+function pwRenderAll(){
+  const mon=pwGetMonday();
+  const sun=new Date(mon);sun.setDate(sun.getDate()+6);
+  document.getElementById('pwWeekLabel').textContent=new Date().getFullYear()+'년 '+pwCurrentWeek+'주차';
+  document.getElementById('pwWeekDate').textContent=(mon.getMonth()+1)+'/'+mon.getDate()+' ~ '+(sun.getMonth()+1)+'/'+sun.getDate();
+
+  let tabH='';
+  for(let i=0;i<7;i++){
+    const dt=new Date(mon);dt.setDate(dt.getDate()+i);
+    tabH+='<button class="pw-dtab'+(i===0?' active':'')+'" onclick="pwShowDayTab('+i+')">'+PW_DAYS[i]+'<span class="dow">'+(dt.getMonth()+1)+'/'+dt.getDate()+'</span></button>';
+  }
+  document.getElementById('pwTabRow').innerHTML=tabH;
+
+  let panH='';
+  pwWeekPlan.forEach(function(plan,i){
+    const keys=pwDayKeys(plan);
+    const tot=pwCalcMeal(keys);
+    panH+='<div class="pw-day-wrap'+(i===0?' active':'')+'" id="pw-dpan-'+i+'">';
+    panH+='<div class="pw-day-head"><div class="pw-day-kcal">'+tot.kcal+' kcal</div><div class="pw-day-macro">탄'+tot.c+'g · 단'+tot.p+'g · 지'+tot.f+'g</div></div>';
+
+    var lk=[plan.lunch.rice].concat(plan.lunch.mains).concat([plan.lunch.soup]).concat(plan.lunch.sides).concat([plan.lunch.fruit]).filter(Boolean);
+    var lm=pwCalcMeal(lk);
+    panH+='<div class="pw-meal-card"><div class="pw-meal-head pw-bg-lunch"><span>🍽️ 점심 11~12시</span><span class="pw-meal-kcal-badge">'+lm.kcal+'kcal</span></div>';
+    lk.forEach(function(k){var r=R[k];if(r)panH+=pwFoodRow(k,r)});
+    panH+='</div>';
+
+    var sk=plan.snack.items;
+    var sm=pwCalcMeal(sk);
+    panH+='<div class="pw-meal-card"><div class="pw-meal-head pw-bg-snack"><span>🥜 간식 2~3시</span><span class="pw-meal-kcal-badge">'+sm.kcal+'kcal</span></div>';
+    sk.forEach(function(k){var r=R[k];if(r)panH+=pwFoodRow(k,r)});
+    panH+='</div>';
+
+    var dk=[plan.dinner.rice].concat(plan.dinner.mains).concat([plan.dinner.soup]).concat(plan.dinner.sides).concat([plan.dinner.fruit]).filter(Boolean);
+    var dm=pwCalcMeal(dk);
+    panH+='<div class="pw-meal-card"><div class="pw-meal-head pw-bg-dinner"><span>🌙 저녁 5~6시</span><span class="pw-meal-kcal-badge">'+dm.kcal+'kcal</span></div>';
+    dk.forEach(function(k){var r=R[k];if(r)panH+=pwFoodRow(k,r)});
+    panH+='</div>';
+
+    panH+='</div>';
+  });
+  document.getElementById('pwDayPanels').innerHTML=panH;
+
+  document.querySelectorAll('.pw-dtab').forEach(function(b){
+    b.addEventListener('touchend',function(e){e.preventDefault();this.click()},{passive:false});
+  });
+}
+
+function pwFoodRow(key,r){
+  return '<div class="pw-food-row" onclick="pwOpenRecipe(\''+key+'\')"><div class="pw-food-emoji">'+r.emoji+'</div><div class="pw-food-info"><div class="pw-food-name">'+r.name+'</div><div class="pw-food-amt">'+(r.sv||'')+'</div></div><div class="pw-food-kcal">'+r.kcal+'</div></div>';
+}
+
+function pwShowDayTab(i){
+  document.querySelectorAll('.pw-dtab').forEach(function(t,j){t.classList.toggle('active',j===i)});
+  document.querySelectorAll('.pw-day-wrap').forEach(function(p,j){p.classList.toggle('active',j===i)});
+}
+
+function pwOpenRecipe(key){
+  var r=R[key];if(!r)return;
+  var h='<div class="pw-modal-top"><div class="pw-modal-emoji">'+r.emoji+'</div><div class="pw-modal-name">'+r.name+'</div><div class="pw-modal-sub">⏱️ '+r.time+(r.sv?' · 📏 '+r.sv:'')+'</div></div>';
+  h+='<div class="pw-modal-macros"><div class="pw-modal-macro pw-m-kcal"><div class="val">'+r.kcal+'</div><div class="lbl">kcal</div></div><div class="pw-modal-macro pw-m-carb"><div class="val">'+r.c+'g</div><div class="lbl">탄수</div></div><div class="pw-modal-macro pw-m-prot"><div class="val">'+r.p+'g</div><div class="lbl">단백</div></div><div class="pw-modal-macro pw-m-fat"><div class="val">'+r.f+'g</div><div class="lbl">지방</div></div></div>';
+  h+='<div class="pw-modal-section"><h3>재료</h3>';
+  r.ing.forEach(function(ig){
+    var cc=ig.c==='①'?'pw-ic1':ig.c==='⑥'?'pw-ic6':(ig.c==="⑥'"?'pw-ic6p':'');
+    h+='<div class="pw-ing-row"><span>'+ig.n+(ig.c?'<span class="pw-ing-cat '+cc+'">'+ig.c+'</span>':'')+'</span><span style="color:#999">'+ig.a+'</span></div>';
+  });
+  h+='</div><div class="pw-modal-section"><h3>조리법</h3>';
+  r.steps.forEach(function(s,j){h+='<div class="pw-step"><div class="pw-step-num">'+(j+1)+'</div><div>'+s+'</div></div>'});
+  h+='</div><div class="pw-modal-close"><button class="pw-btn" onclick="pwCloseRecipe()">닫기</button></div>';
+  document.getElementById('pwRecipeContent').innerHTML=h;
+  document.getElementById('pwRecipeModal').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function pwCloseRecipe(){
+  document.getElementById('pwRecipeModal').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+function pwOpenShop(){
+  var allIngs={};
+  pwWeekPlan.forEach(function(plan){
+    var keys=pwDayKeys(plan);
+    keys.forEach(function(k){
+      var r=R[k];if(!r)return;
+      r.ing.forEach(function(ig){
+        if(!ig.n||ig.n==='물')return;
+        if(!allIngs[ig.n])allIngs[ig.n]={cat:ig.c,count:0};
+        allIngs[ig.n].count++;
+      });
+    });
+  });
+
+  var cats={'①':[],'⑥':[],"⑥'":[],'':[]};
+  Object.keys(allIngs).forEach(function(n){
+    var c=allIngs[n].cat;
+    if(cats[c])cats[c].push({n:n,count:allIngs[n].count});
+    else cats[''].push({n:n,count:allIngs[n].count});
+  });
+
+  var h='<div class="pw-shop-head"><h2>🛒 이번 주 장보기 리스트</h2><p>'+Object.keys(allIngs).length+'가지 식재료</p></div>';
+  var labels={'①':'① 카테고리','⑥':'⑥ 카테고리',"⑥'":"⑥' 카테고리",'':'기타/양념'};
+  var emojis={'①':'🟢','⑥':'🔵',"⑥'":'🟣','':'⚪'};
+  Object.keys(cats).forEach(function(c){
+    if(cats[c].length===0)return;
+    cats[c].sort(function(a,b){return b.count-a.count});
+    h+='<div class="pw-shop-cat"><div class="pw-shop-cat-label">'+emojis[c]+' '+labels[c]+' ('+cats[c].length+')</div><div class="pw-shop-items">';
+    cats[c].forEach(function(item){
+      h+='<label class="pw-shop-item"><input type="checkbox"> '+item.n+(item.count>3?' <b>(자주)</b>':'')+'</label>';
+    });
+    h+='</div></div>';
+  });
+  h+='<div class="pw-modal-close"><button class="pw-btn" onclick="pwCloseShop()">닫기</button></div>';
+  document.getElementById('pwShopContent').innerHTML=h;
+  document.getElementById('pwShopModal').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+function pwCloseShop(){
+  document.getElementById('pwShopModal').classList.remove('active');
+  document.body.style.overflow='';
+}
+
+// Init planner
+pwGenerateFromWeek();
+})();
+</script>
+</body>
+</html>
